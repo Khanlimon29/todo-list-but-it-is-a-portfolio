@@ -55,7 +55,7 @@ void WriteTodoListToFile(string filename, vector<Todo> todos) {
     }
 
     for (auto todo : todos) {
-        file << todo.check << " " << todo.task << endl;
+        file << todo.check << todo.task << endl;
     }
 
     file.close();
@@ -67,12 +67,12 @@ void MenuDraw(vector<Todo> todos, int currOpt) {
     cout << "Меню управления: ↑ - строчка вверх, ↓ - строчка вниз, N - создание нового пункта, E - закрытие пункта, S - сохранение изменений, Delete - удаление строки, Enter - выбор пункта, ";
     cout << "\nEsc - выход из программы\n\n";
     for (size_t i = 0; i < todos.size(); ++i) {
-        if (i == size_t(currOpt)) {
-            cout << ">>> ";
-        }
+        if (i == size_t(currOpt)) cout << "> ";
+        else cout << "  ";
         if (todos[i].check == 0) cout << "TODO | ";
         else cout << "DONE | ";
-        cout << i << ". " << todos[i].task << endl;
+        cout << i << ". ";
+        cout << todos[i].task << endl;
     }
     gotoxy(0, currOpt + 3);
 }
@@ -107,7 +107,7 @@ int main() {
             case 13: // Enter
             {
                 system("cls");
-                cout << "Выбранный вариант: " << todos[currOpt].task << endl;
+                cout << "Выбранный вариант: " << todos[currOpt].task <<  "\n\n";
                 if (todos[currOpt].check == 0) {
                     cout << "TODO";
                     _getch();

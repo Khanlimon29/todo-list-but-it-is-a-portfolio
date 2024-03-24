@@ -7,11 +7,20 @@ int Calculator() {
 	float b = 0;
 	float devision = 0;
 
-	cout << "Введите два числа:";
+	cout << "Введите два числа через пробел: ";
+
 	cin >> a;
 	cin >> b;
 
-	cout << "Сумма = ";
+	while (cin.fail()) {
+		cin.clear();
+		cin.ignore(numeric_limits<streamsize>::max(), '\n');
+		cout << "Введите значения повторно: ";
+		cin >> a;
+		cin >> b;
+	}
+
+	cout << "\nСумма = ";
 	cout << a + b;
 
 	cout << "\nРазность = ";
@@ -29,6 +38,6 @@ int Calculator() {
 		cout << "\nДеление на ноль невозможно";
 	}
 
-	cout << "\nНажмите на любую кнопку для выхода";
+	cout << "\n\nНажмите на любую кнопку для выхода";
 	return 0;
 }
