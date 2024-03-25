@@ -7,6 +7,7 @@
 #include <sstream>
 #include "Ascii_Finder.h"
 #include "Calc.h"
+#include "tic_tac_toe.h"
 
 using namespace std;
 
@@ -123,7 +124,9 @@ int main() {
                 }
                 if (currOpt == 2) {
                     Calculator();
-                    _getch();
+                }
+                if (currOpt == 3) {
+                    tic_tac();
                 }
                 MenuDraw(todos, currOpt);
                 break;

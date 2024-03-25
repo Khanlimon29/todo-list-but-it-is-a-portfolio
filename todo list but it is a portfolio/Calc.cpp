@@ -1,3 +1,4 @@
+#include <conio.h>
 #include <iostream>
 #include "Calc.h"
 using namespace std;
@@ -39,5 +40,6 @@ int Calculator() {
 	}
 
 	cout << "\n\nНажмите на любую кнопку для выхода";
+	_getch();
 	return 0;
 }

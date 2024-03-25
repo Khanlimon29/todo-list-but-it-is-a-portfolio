@@ -18,13 +18,13 @@
     <ClCompile Include="main.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="testfield.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="Ascii_Finder.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
     <ClCompile Include="Calc.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
+    <ClCompile Include="tic_tac_toe.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -33,6 +33,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Calc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="tic_tac_toe.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
