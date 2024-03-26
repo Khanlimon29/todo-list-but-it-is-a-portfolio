@@ -31,3 +31,4 @@
 0Поиск пути в лабиринте: Программа для нахождения пути через лабиринт с использованием алгоритмов поиска.
 0Side quest: English localization
 0Side quest: Mega calculator
+0TEST SUBJECT

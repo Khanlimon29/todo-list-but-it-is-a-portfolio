@@ -66,7 +66,7 @@ void WriteTodoListToFile(string filename, vector<Todo> todos) {
 // Функция для отрисовки меню
 void MenuDraw(vector<Todo> todos, int currOpt) {
     system("cls");
-    cout << "Меню управления: ↑ - строчка вверх, ↓ - строчка вниз, N - создание нового пункта, E - закрытие пункта, S - сохранение изменений, Delete - удаление строки, Enter - выбор пункта, ";
+    cout << "Меню управления: ↑ - строчка вверх, ↓ - строчка вниз, N - создание нового пункта, M - редактирование пункта, E - закрытие пункта, S - сохранение изменений, Delete - удаление пункта, Enter - выбор пункта, ";
     cout << "\nEsc - выход из программы\n\n";
     for (size_t i = 0; i < todos.size(); ++i) {
         if (i == size_t(currOpt)) cout << "> ";
@@ -78,6 +78,28 @@ void MenuDraw(vector<Todo> todos, int currOpt) {
     }
     gotoxy(0, currOpt + 3);
 }
+
+void EditTask(string& task) {
+    cout << "Enter - сохранение, Esc - выход без изменений\nРедактирование: ";
+    string editedTask = task;
+    cout << editedTask;
+    char ch;
+    while ((ch = _getch()) != 13 && ch != 27) { // Enter or Esc
+        if (ch == 8) { // Backspace 
+            if (!editedTask.empty()) {
+                editedTask.pop_back();
+                cout << "\b \b";
+            }
+        }
+        else {
+            editedTask.push_back(ch);
+            cout << ch;
+        }
+    }
+    if (ch == 13) // Enter save 
+        task = editedTask;
+}
+
 
 int main() {
     system("mode 650");
@@ -179,6 +201,13 @@ int main() {
                 system("cls");
                 cout << "Изменения сохранены. Нажмите на любую кнопку для продолжения.";
                 _getch();
+                MenuDraw(todos, currOpt);
+                break;
+            }
+            case 109: // M
+            {
+                system("cls");
+                EditTask(todos[currOpt].task);
                 MenuDraw(todos, currOpt);
                 break;
             }
