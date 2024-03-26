@@ -8,6 +8,7 @@
 #include "Ascii_Finder.h"
 #include "Calc.h"
 #include "tic_tac_toe.h"
+#include "RandNumb.h"
 
 using namespace std;
 
@@ -128,6 +129,10 @@ int main() {
                 if (currOpt == 3) {
                     tic_tac();
                 }
+                if (currOpt == 4) {
+                    RandomNumber();
+                }
+
                 MenuDraw(todos, currOpt);
                 break;
             }

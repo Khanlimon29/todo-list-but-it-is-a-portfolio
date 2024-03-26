@@ -133,11 +133,13 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp17</LanguageStandard>
     </ClCompile>
+    <ClCompile Include="RandNumb.cpp" />
     <ClCompile Include="tic_tac_toe.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ascii_Finder.h" />
     <ClInclude Include="Calc.h" />
+    <ClInclude Include="RandNumb.h" />
     <ClInclude Include="tic_tac_toe.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

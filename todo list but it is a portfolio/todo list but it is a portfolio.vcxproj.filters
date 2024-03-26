@@ -27,6 +27,9 @@
     <ClCompile Include="tic_tac_toe.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="RandNumb.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ascii_Finder.h">
@@ -36,6 +39,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="tic_tac_toe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RandNumb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
