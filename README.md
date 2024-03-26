@@ -1,38 +1,29 @@
-# Todo list but it is a portfolio
+# Список дел 
 
-### Todo-List
+Этот проект представляет собой программу-список дел, где каждый элемент списка - это проект, над которым я работал. Созданная с целью ведения собственного портфолио работ, эта программа предлагает удобный способ организации и представления моих проектов.
 
-This program serves as a collection of projects, showcasing skills and creativity.
+## Основные возможности
+Управление проектами: Добавление, удаление и редактирование проектов в списке.  
+Подробные описания: Каждый проект имеет краткое описание и дополнительные детали.  
+Удобное представление: Простой и понятный интерфейс для просмотра моих работ.
 
-### Features:
+## Использование  
+**TODO**  
 
-Project Overview: Get a quick snapshot of completed and ongoing projects.
-
-Detailed Descriptions: Dive into specifics of each project, including goals and technologies used.
-
-Easy Navigation: Seamlessly explore different projects and associated tasks.
-
-### Usage:
-
-**TODO**
-
-Feel free to reach out for more information about a specific project. Thank you for your interest!
+Не стесняйтесь обращаться с запросом дополнительной информации о конкретном проекте. Спасибо за ваш интерес!
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-### Список дел 
+# To-Do List 
 
-Эта программа представляет коллекцию проектов, демонстрируя навыки и креативность.
+This project is a to-do list program where each item on the list is a project I've been working on. Created with the goal of maintaining my own portfolio of work, this program offers a convenient way to organize and present my projects.
 
-### Особенности:
-Обзор проекта: Получите обзор завершенных и текущих проектов.
+## Key Features
+Project Management: Add, delete, and edit projects in the list.  
+Detailed descriptions: Each project has a brief description and additional details.  
+Easy presentation: A simple and clear interface to view my work.
 
-Подробные описания: Погрузитесь в детали каждого проекта, включая цели и используемые технологии.
+## Usage  
+**TODO**  
 
-Простая навигация: Легко исследуйте различные проекты и связанные задачи.
-
-### Использование:
-
-**TODO**
-
-Не стесняйтесь обращаться с запросом дополнительной информации о конкретном проекте. Спасибо за ваш интерес!
+Feel free to contact to request more information about a specific project. Thank you for your interest!
