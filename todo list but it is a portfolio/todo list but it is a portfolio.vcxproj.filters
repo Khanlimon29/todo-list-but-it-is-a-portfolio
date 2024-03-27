@@ -30,6 +30,9 @@
     <ClCompile Include="RandNumb.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="PasswordGen.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ascii_Finder.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RandNumb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PasswordGen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

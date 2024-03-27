@@ -10,6 +10,7 @@
 #include "Calc.h"
 #include "tic_tac_toe.h"
 #include "RandNumb.h"
+#include "PasswordGen.h"
 
 using namespace std;
 
@@ -173,8 +174,11 @@ int main() {
                 if (currOpt == 3) {
                     tic_tac();
                 }
-                if (currOpt == 5) {
+                if (currOpt == 4) {
                     RandomNumber();
+                }
+                if (currOpt == 5) {
+                    Generator();
                 }
 
                 MenuDraw(todos, currOpt);
