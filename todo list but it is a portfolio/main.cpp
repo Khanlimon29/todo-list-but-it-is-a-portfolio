@@ -74,7 +74,9 @@ void MenuDraw(vector<Todo> todos, int currOpt) {
         else cout << "  ";
         if (todos[i].check == 0) cout << "TODO | ";
         else cout << "DONE | ";
-        cout << i << ". ";
+        cout << i << ".";
+        if (i < 10) cout << "  ";
+        else cout << " ";
         cout << todos[i].task << endl;
     }
     gotoxy(0, currOpt + 3);
@@ -128,13 +130,17 @@ int main() {
             case 72: // Up
             {
                 currOpt = (currOpt - 1 + numbOfOpt) % numbOfOpt;
-                MenuDraw(todos, currOpt);
+                cout << "\r  ";
+                gotoxy(0, currOpt + 3);
+                cout << "> \r";
                 break;
             }
             case 80: // Down
             {
                 currOpt = (currOpt + 1) % numbOfOpt;
-                MenuDraw(todos, currOpt);
+                cout << "\r  ";
+                gotoxy(0, currOpt + 3);
+                cout << "> \r";
                 break;
             }
             case 13: // Enter
