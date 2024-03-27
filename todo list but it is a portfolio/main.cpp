@@ -64,23 +64,30 @@ void WriteTodoListToFile(string filename, vector<Todo> todos) {
     file.close();
 }
 
+void LineDraw(vector<Todo> todos, int currOpt, int i) {
+    if (i == size_t(currOpt)) cout << "> ";
+    else cout << "  ";
+    if (todos[i].check == 0) cout << "TODO | ";
+    else cout << "DONE | ";
+    cout << i << ".";
+    if (i < 10) cout << "  ";
+    else cout << " ";
+    cout << todos[i].task << "\r";
+}
+
 // Функция для отрисовки меню
 void MenuDraw(vector<Todo> todos, int currOpt) {
     system("cls");
     cout << "Меню управления: ↑ - строчка вверх, ↓ - строчка вниз, N - создание нового пункта, M - редактирование пункта, E - закрытие пункта, S - сохранение изменений, Z - отмена последнего изменения";
     cout << "\nDelete - удаление пункта, Enter - выбор пункта, Esc - выход из программы\n\n";
     for (size_t i = 0; i < todos.size(); ++i) {
-        if (i == size_t(currOpt)) cout << "> ";
-        else cout << "  ";
-        if (todos[i].check == 0) cout << "TODO | ";
-        else cout << "DONE | ";
-        cout << i << ".";
-        if (i < 10) cout << "  ";
-        else cout << " ";
-        cout << todos[i].task << endl;
+        LineDraw(todos, currOpt, i);
+        cout << endl;
     }
     gotoxy(0, currOpt + 3);
 }
+
+
 
 void NewTask(vector<Todo>& todos, int& numbOfOpt, int& currOpt, const string& newTask) {
     Todo newTodo;
@@ -166,7 +173,7 @@ int main() {
                 if (currOpt == 3) {
                     tic_tac();
                 }
-                if (currOpt == 4) {
+                if (currOpt == 5) {
                     RandomNumber();
                 }
 
@@ -194,7 +201,7 @@ int main() {
             {
                 historyStack.push(todos); 
                 todos[currOpt].check = !todos[currOpt].check;
-                MenuDraw(todos, currOpt);
+                LineDraw(todos, currOpt, currOpt);
                 break;
             }
             case 83: // Delete
