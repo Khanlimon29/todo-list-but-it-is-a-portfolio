@@ -66,8 +66,8 @@ void WriteTodoListToFile(string filename, vector<Todo> todos) {
 // Функция для отрисовки меню
 void MenuDraw(vector<Todo> todos, int currOpt) {
     system("cls");
-    cout << "Меню управления: ↑ - строчка вверх, ↓ - строчка вниз, N - создание нового пункта, M - редактирование пункта, E - закрытие пункта, S - сохранение изменений, Delete - удаление пункта, Enter - выбор пункта, ";
-    cout << "\nEsc - выход из программы\n\n";
+    cout << "Меню управления: ↑ - строчка вверх, ↓ - строчка вниз, N - создание нового пункта, M - редактирование пункта, E - закрытие пункта, S - сохранение изменений, Z - отмена последнего изменения";
+    cout << "\nDelete - удаление пункта, Enter - выбор пункта, Esc - выход из программы\n\n";
     for (size_t i = 0; i < todos.size(); ++i) {
         if (i == size_t(currOpt)) cout << "> ";
         else cout << "  ";
@@ -77,6 +77,14 @@ void MenuDraw(vector<Todo> todos, int currOpt) {
         cout << todos[i].task << endl;
     }
     gotoxy(0, currOpt + 3);
+}
+
+void NewTask(vector<Todo>& todos, int& numbOfOpt, int& currOpt, const string& newTask) {
+    Todo newTodo;
+    newTodo.check = false;
+    newTodo.task = newTask;
+    todos.insert(todos.begin() + currOpt, newTodo);
+    numbOfOpt = todos.size();
 }
 
 void EditTask(string& task) {
@@ -170,11 +178,7 @@ int main() {
                 cout << "Введите новый пункт: ";
                 string newTask;
                 getline(cin, newTask);
-                Todo newTodo;
-                newTodo.check = false;
-                newTodo.task = newTask;
-                todos.push_back(newTodo);
-                numbOfOpt++;
+                NewTask(todos, numbOfOpt, currOpt, newTask);
                 MenuDraw(todos, currOpt);
                 break;
             }
