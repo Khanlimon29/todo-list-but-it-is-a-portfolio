@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <stack>
 #include <Windows.h>
 #include <conio.h>
 #include <sstream>
@@ -104,15 +105,15 @@ void EditTask(string& task) {
             cout << ch;
         }
     }
-    if (ch == 13) // Enter save 
+    if (ch == 13) // Enter save
         task = editedTask;
 }
-
 
 int main() {
     system("mode 650");
     string filename = "Todo.txt";
     vector<Todo> todos = ReadTodoListFromFile(filename);
+    stack<vector<Todo>> historyStack;
 
     int numbOfOpt = todos.size();
     int currOpt = 0;
@@ -175,6 +176,7 @@ int main() {
             case 110: // N
             {
                 system("cls");
+                historyStack.push(todos); 
                 cout << "Введите новый пункт: ";
                 string newTask;
                 getline(cin, newTask);
@@ -184,13 +186,15 @@ int main() {
             }
             case 101: // E
             {
+                historyStack.push(todos); 
                 todos[currOpt].check = !todos[currOpt].check;
                 MenuDraw(todos, currOpt);
                 break;
             }
-            case 83: // Delete 
+            case 83: // Delete
             {
                 if (!todos.empty()) {
+                    historyStack.push(todos);
                     todos.erase(todos.begin() + currOpt);
                     numbOfOpt--;
                     if (currOpt >= numbOfOpt)
@@ -202,6 +206,9 @@ int main() {
             case 115: // S
             {
                 WriteTodoListToFile(filename, todos);
+                while (!historyStack.empty()) {
+                    historyStack.pop();
+                }
                 system("cls");
                 cout << "Изменения сохранены. Нажмите на любую кнопку для продолжения.";
                 _getch();
@@ -211,8 +218,19 @@ int main() {
             case 109: // M
             {
                 system("cls");
+                historyStack.push(todos);
                 EditTask(todos[currOpt].task);
                 MenuDraw(todos, currOpt);
+                break;
+            }
+            case 122: // Z
+            {
+                if (!historyStack.empty()) {
+                    todos = historyStack.top();
+                    historyStack.pop();
+                    numbOfOpt = todos.size();
+                    MenuDraw(todos, currOpt);
+                }
                 break;
             }
             }
