@@ -33,6 +33,9 @@
     <ClCompile Include="PasswordGen.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="PrimeNumb.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ascii_Finder.h">
@@ -48,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PasswordGen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PrimeNumb.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

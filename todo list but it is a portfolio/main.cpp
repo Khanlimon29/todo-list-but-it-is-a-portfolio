@@ -11,6 +11,7 @@
 #include "tic_tac_toe.h"
 #include "RandNumb.h"
 #include "PasswordGen.h"
+#include "PrimeNumb.h"
 
 using namespace std;
 
@@ -179,6 +180,9 @@ int main() {
                 }
                 if (currOpt == 5) {
                     Generator();
+                }
+                if (currOpt == 15) {
+                    Finder();
                 }
 
                 MenuDraw(todos, currOpt);
