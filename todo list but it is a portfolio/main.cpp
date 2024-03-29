@@ -87,14 +87,22 @@ void LineDraw(vector<Todo> todos, int currOpt, int i) {
     cout << todos[i].task << "\r";
 }
 
-// Функция для отричовки процента выполненных заданий
+// Функция для отрисовки процента выполненных заданий и шкалы прогресса
 void PercentageDraw(float DonePercentage, vector<Todo> todos, int numbOfOpt) {
     gotoxy(0, 2);
-    cout << "                            \r"; // Костыль :3
+    cout << "                                                                                                   ";   // Костыль :3
+    gotoxy(0, 2); 
     DonePercentage = (static_cast<float>(Done(todos, numbOfOpt)) / numbOfOpt) * 100;
-    cout << "Процент выполнения: ";
-    cout << DonePercentage;
-    cout << "%\n\n";
+    int barWidth = 50;
+    int progress = barWidth * DonePercentage / 100;
+    cout << "Прогресс: [";
+    for (int i = 0; i < barWidth; ++i) {
+        if (i < progress) cout << "=";
+        else cout << " ";
+    }
+    cout << "] " << DonePercentage << "%";
+    if (DonePercentage == 100) cout << " Sheeeeeeeeeeeeeeeeeeeeeeesh ";
+    cout << "\n\n";
 }
 
 // Функция для отрисовки меню
