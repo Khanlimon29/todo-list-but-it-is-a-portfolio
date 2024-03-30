@@ -88,11 +88,11 @@ void LineDraw(vector<Todo> todos, int currOpt, int i) {
 }
 
 // Функция для отрисовки процента выполненных заданий и шкалы прогресса
-void PercentageDraw(float DonePercentage, vector<Todo> todos, int numbOfOpt) {
+void PercentageDraw(vector<Todo> todos, int numbOfOpt) {
     gotoxy(0, 2);
     cout << "                                                                                                   ";   // Костыль :3
     gotoxy(0, 2); 
-    DonePercentage = (static_cast<float>(Done(todos, numbOfOpt)) / numbOfOpt) * 100;
+    float DonePercentage = (static_cast<float>(Done(todos, numbOfOpt)) / numbOfOpt) * 100;
     int barWidth = 50;
     int progress = barWidth * DonePercentage / 100;
     cout << "Прогресс: [";
@@ -106,12 +106,12 @@ void PercentageDraw(float DonePercentage, vector<Todo> todos, int numbOfOpt) {
 }
 
 // Функция для отрисовки меню
-void MenuDraw(vector<Todo> todos, int currOpt, float DonePercentage, int numbOfOpt) {
+void MenuDraw(vector<Todo> todos, int currOpt, int numbOfOpt) {
     system("cls");
     cout << "Меню управления: ↑ - строчка вверх, ↓ - строчка вниз, N - создание нового пункта, M - редактирование пункта, E - закрытие пункта, S - сохранение изменений, Z - отмена последнего изменения";
     cout << "\nDelete - удаление пункта, Enter - выбор пункта, Esc - выход из программы\n";
     
-    PercentageDraw(DonePercentage, todos, numbOfOpt);
+    PercentageDraw(todos, numbOfOpt);
 
     for (size_t i = 0; i < todos.size(); ++i) {
         LineDraw(todos, currOpt, i);
@@ -157,13 +157,10 @@ int main() {
     int currOpt = 0;
     char key;
     bool running = true;
-    float DonePercentage = 0;
-
     vector<Todo> todos = ReadTodoListFromFile(filename);
     stack<vector<Todo>> historyStack;
     int numbOfOpt = todos.size();
-    DonePercentage = (static_cast<float>(Done(todos, numbOfOpt)) / numbOfOpt) * 100;
-    MenuDraw(todos, currOpt, DonePercentage, numbOfOpt);
+    MenuDraw(todos, currOpt, numbOfOpt);
     
     while (running) {
         if (_kbhit()) {
@@ -192,7 +189,7 @@ int main() {
                 if (todos[currOpt].check == 0) {
                     cout << "TODO";
                     _getch();
-                    MenuDraw(todos, currOpt, DonePercentage, numbOfOpt);
+                    MenuDraw(todos, currOpt, numbOfOpt);
                     break;
                 }
                 if (currOpt == 0) {
@@ -214,11 +211,15 @@ int main() {
                 if (currOpt == 5) {
                     Generator();
                 }
+                if (currOpt == 7)
+                {
+                    RandomNumberGame();
+                }
                 if (currOpt == 15) {
                     Finder();
                 }
 
-                MenuDraw(todos, currOpt, DonePercentage, numbOfOpt);
+                MenuDraw(todos, currOpt, numbOfOpt);
                 break;
             }
             case 27: // Esc
@@ -235,14 +236,14 @@ int main() {
                 string newTask;
                 getline(cin, newTask);
                 NewTask(todos, numbOfOpt, currOpt, newTask);
-                MenuDraw(todos, currOpt, DonePercentage, numbOfOpt);
+                MenuDraw(todos, currOpt, numbOfOpt);
                 break;
             }
             case 101: // E
             {
                 historyStack.push(todos); 
                 todos[currOpt].check = !todos[currOpt].check;
-                PercentageDraw(DonePercentage, todos, numbOfOpt);
+                PercentageDraw(todos, numbOfOpt);
                 gotoxy(0, currOpt + 4);
                 LineDraw(todos, currOpt, currOpt);
                 break;
@@ -254,7 +255,7 @@ int main() {
                     todos.erase(todos.begin() + currOpt);
                     numbOfOpt--;
                     if (currOpt >= numbOfOpt) currOpt = numbOfOpt - 1;   
-                    MenuDraw(todos, currOpt, DonePercentage, numbOfOpt);
+                    MenuDraw(todos, currOpt, numbOfOpt);
                 }
                 break;
             }
@@ -267,7 +268,7 @@ int main() {
                 system("cls");
                 cout << "Изменения сохранены. Нажмите на любую кнопку для продолжения.";
                 _getch();
-                MenuDraw(todos, currOpt, DonePercentage, numbOfOpt);
+                MenuDraw(todos, currOpt, numbOfOpt);
                 break;
             }
             case 109: // M
@@ -275,7 +276,7 @@ int main() {
                 system("cls");
                 historyStack.push(todos);
                 EditTask(todos[currOpt].task);
-                MenuDraw(todos, currOpt, DonePercentage, numbOfOpt);
+                MenuDraw(todos, currOpt, numbOfOpt);
                 break;
             }
             case 122: // Z
@@ -284,7 +285,7 @@ int main() {
                     todos = historyStack.top();
                     historyStack.pop();
                     numbOfOpt = todos.size();
-                    MenuDraw(todos, currOpt, DonePercentage, numbOfOpt);
+                    MenuDraw(todos, currOpt, numbOfOpt);
                 }
                 break;
             }
