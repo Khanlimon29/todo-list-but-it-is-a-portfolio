@@ -36,6 +36,9 @@
     <ClCompile Include="PrimeNumb.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="RandomNumberGame.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ascii_Finder.h">
@@ -54,6 +57,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="PrimeNumb.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RandomNumberGame.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

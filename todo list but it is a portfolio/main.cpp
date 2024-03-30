@@ -12,6 +12,7 @@
 #include "RandNumb.h"
 #include "PasswordGen.h"
 #include "PrimeNumb.h"
+#include "RandomNumberGame.h"
 
 using namespace std;
 
