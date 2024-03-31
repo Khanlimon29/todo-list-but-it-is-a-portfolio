@@ -7,6 +7,7 @@ using namespace std;
 void RandomNumberGame() {
 	RandomNumberGenerator rng;
 	int UserNumber = -1;
+	int attempt = 0;
 	int RandomNumber = rng.getRandomInRange(0, 10);
 	cout << "Я загадал случайное число от 0 до 10, попробуй отгадать чтобы выйти в главное меню\n";
 	while (UserNumber != RandomNumber) {
@@ -18,7 +19,8 @@ void RandomNumberGame() {
 			cout << "Введите значения повторно. Ваше число: ";
 			cin >> UserNumber;
 		}	
+		attempt++;
 	}
-	cout << "Поздравляю, вы угадали число\nНажмите на любую кнопку для продолжения";
+	cout << "Поздравляю, вы угадали число c " << attempt << " попытки\nНажмите на любую кнопку для продолжения";
 	_getch();	
 }
