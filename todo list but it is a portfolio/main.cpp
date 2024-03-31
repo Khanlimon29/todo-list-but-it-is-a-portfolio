@@ -18,7 +18,7 @@ using namespace std;
 
 // Структура для хранения задач
 struct Todo {
-    bool check;
+    int check;
     string task;
 };
 
@@ -71,7 +71,7 @@ void WriteTodoListToFile(string filename, vector<Todo> todos) {
 int Done(vector<Todo> todos, int NumbOfOpt) {
     int done = 0;
     for (int i = 0; i < NumbOfOpt; i++) {
-        if (todos[i].check == 1) done++;
+        if (todos[i].check == 2) done++;
     }
     return done;
 }
@@ -80,8 +80,15 @@ int Done(vector<Todo> todos, int NumbOfOpt) {
 void LineDraw(vector<Todo> todos, int currOpt, int i) {
     if (i == size_t(currOpt)) cout << "> ";
     else cout << "  ";
-    if (todos[i].check == 0) cout << "TODO | ";
-    else cout << "DONE | ";
+
+    if (todos[i].check == 0)
+        cout << "TODO";
+    else if (todos[i].check == 1)
+        cout << "WIP ";
+    else if (todos[i].check == 2)
+        cout << "DONE";
+
+    cout << " | ";
     cout << i << ".";
     if (i < 10) cout << "  ";
     else cout << " ";
@@ -92,7 +99,7 @@ void LineDraw(vector<Todo> todos, int currOpt, int i) {
 void PercentageDraw(vector<Todo> todos, int numbOfOpt) {
     gotoxy(0, 2);
     cout << "                                                                                                   ";   // Костыль :3
-    gotoxy(0, 2); 
+    gotoxy(0, 2);
     float DonePercentage = (static_cast<float>(Done(todos, numbOfOpt)) / numbOfOpt) * 100;
     int barWidth = 50;
     int progress = barWidth * DonePercentage / 100;
@@ -111,7 +118,7 @@ void MenuDraw(vector<Todo> todos, int currOpt, int numbOfOpt) {
     system("cls");
     cout << "Меню управления: ↑ - строчка вверх, ↓ - строчка вниз, N - создание нового пункта, M - редактирование пункта, E - закрытие пункта, S - сохранение изменений, Z - отмена последнего изменения";
     cout << "\nDelete - удаление пункта, Enter - выбор пункта, Esc - выход из программы\n";
-    
+
     PercentageDraw(todos, numbOfOpt);
 
     for (size_t i = 0; i < todos.size(); ++i) {
@@ -124,7 +131,7 @@ void MenuDraw(vector<Todo> todos, int currOpt, int numbOfOpt) {
 // Функция для добавления нового пункта
 void NewTask(vector<Todo>& todos, int& numbOfOpt, int& currOpt, const string& newTask) {
     Todo newTodo;
-    newTodo.check = false;
+    newTodo.check = 0;
     newTodo.task = newTask;
     todos.insert(todos.begin() + currOpt, newTodo);
     numbOfOpt = todos.size();
@@ -162,10 +169,12 @@ int main() {
     stack<vector<Todo>> historyStack;
     int numbOfOpt = todos.size();
     MenuDraw(todos, currOpt, numbOfOpt);
-    
+
+    int checkCounter = 0;
+
     while (running) {
         if (_kbhit()) {
-            key = _getch();           
+            key = _getch();
             switch (key) {
             case 72: // Up
             {
@@ -189,6 +198,12 @@ int main() {
                 cout << "Выбранный вариант: " << todos[currOpt].task <<  "\n\n";
                 if (todos[currOpt].check == 0) {
                     cout << "TODO";
+                    _getch();
+                    MenuDraw(todos, currOpt, numbOfOpt);
+                    break;
+                }
+                if (todos[currOpt].check == 1) {
+                    cout << "Work in progress";
                     _getch();
                     MenuDraw(todos, currOpt, numbOfOpt);
                     break;
@@ -232,7 +247,7 @@ int main() {
             case 110: // N
             {
                 system("cls");
-                historyStack.push(todos); 
+                historyStack.push(todos);
                 cout << "Введите новый пункт: ";
                 string newTask;
                 getline(cin, newTask);
@@ -242,8 +257,8 @@ int main() {
             }
             case 101: // E
             {
-                historyStack.push(todos); 
-                todos[currOpt].check = !todos[currOpt].check;
+                historyStack.push(todos);
+                todos[currOpt].check = (todos[currOpt].check + 1) % 3;
                 PercentageDraw(todos, numbOfOpt);
                 gotoxy(0, currOpt + 4);
                 LineDraw(todos, currOpt, currOpt);
@@ -255,7 +270,7 @@ int main() {
                     historyStack.push(todos);
                     todos.erase(todos.begin() + currOpt);
                     numbOfOpt--;
-                    if (currOpt >= numbOfOpt) currOpt = numbOfOpt - 1;   
+                    if (currOpt >= numbOfOpt) currOpt = numbOfOpt - 1;
                     MenuDraw(todos, currOpt, numbOfOpt);
                 }
                 break;
