@@ -196,19 +196,16 @@ int main() {
             {
                 system("cls");
                 cout << "Выбранный вариант: " << todos[currOpt].task <<  "\n\n";
-                if (todos[currOpt].check == 0) {
+                if (todos[currOpt].check == 1) {
+                    cout << "  ***Work in progress***         ";
+                }               
+                else if (todos[currOpt].check == 0) {
                     cout << "TODO";
                     _getch();
                     MenuDraw(todos, currOpt, numbOfOpt);
                     break;
                 }
-                else if (todos[currOpt].check == 1) {
-                    cout << "Work in progress";
-                    _getch();
-                    MenuDraw(todos, currOpt, numbOfOpt);
-                    break;
-                }
-                else if (currOpt == 0) {
+                if (currOpt == 0) {
                     cout << "Вся программа является списком задач";
                     _getch();
                 }
