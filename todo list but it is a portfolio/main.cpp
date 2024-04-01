@@ -13,6 +13,7 @@
 #include "PasswordGen.h"
 #include "PrimeNumb.h"
 #include "RandomNumberGame.h"
+#include "StackSim.h"
 
 using namespace std;
 
@@ -226,6 +227,9 @@ int main() {
                 }
                 else if (currOpt == 7) {
                     RandomNumberGame();
+                }
+                else if (currOpt == 9) {
+                    StackSimulator();
                 }
                 else if (currOpt == 15) {
                     Finder();

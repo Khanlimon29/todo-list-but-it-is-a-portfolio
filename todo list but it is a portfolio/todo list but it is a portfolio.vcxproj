@@ -137,6 +137,7 @@
     <ClCompile Include="PrimeNumb.cpp" />
     <ClCompile Include="RandNumb.cpp" />
     <ClCompile Include="RandomNumberGame.cpp" />
+    <ClCompile Include="StackSim.cpp" />
     <ClCompile Include="tic_tac_toe.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -146,6 +147,7 @@
     <ClInclude Include="PrimeNumb.h" />
     <ClInclude Include="RandNumb.h" />
     <ClInclude Include="RandomNumberGame.h" />
+    <ClInclude Include="StackSim.h" />
     <ClInclude Include="tic_tac_toe.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
