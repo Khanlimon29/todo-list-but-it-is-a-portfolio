@@ -202,39 +202,37 @@ int main() {
                     MenuDraw(todos, currOpt, numbOfOpt);
                     break;
                 }
-                if (todos[currOpt].check == 1) {
+                else if (todos[currOpt].check == 1) {
                     cout << "Work in progress";
                     _getch();
                     MenuDraw(todos, currOpt, numbOfOpt);
                     break;
                 }
-                if (currOpt == 0) {
+                else if (currOpt == 0) {
                     cout << "Вся программа является списком задач";
                     _getch();
                 }
-                if (currOpt == 1) {
+                else if (currOpt == 1) {
                     ASCIIfinder();
                 }
-                if (currOpt == 2) {
+                else if (currOpt == 2) {
                     Calculator();
                 }
-                if (currOpt == 3) {
+                else if (currOpt == 3) {
                     tic_tac();
                 }
-                if (currOpt == 4) {
+                else if (currOpt == 4) {
                     RandomNumber();
                 }
-                if (currOpt == 5) {
+                else if (currOpt == 5) {
                     Generator();
                 }
-                if (currOpt == 7)
-                {
+                else if (currOpt == 7) {
                     RandomNumberGame();
                 }
-                if (currOpt == 15) {
+                else if (currOpt == 15) {
                     Finder();
                 }
-
                 MenuDraw(todos, currOpt, numbOfOpt);
                 break;
             }
