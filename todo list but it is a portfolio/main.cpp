@@ -14,6 +14,7 @@
 #include "PrimeNumb.h"
 #include "RandomNumberGame.h"
 #include "StackSim.h"
+#include "QueueSim.h"
 
 using namespace std;
 
@@ -231,7 +232,10 @@ int main() {
                 else if (currOpt == 9) {
                     StackSimulator();
                 }
-                else if (currOpt == 15) {
+                else if (currOpt == 10) {
+                    QueueSimulator();
+                }
+                else if (currOpt == 14) {
                     Finder();
                 }
                 MenuDraw(todos, currOpt, numbOfOpt);

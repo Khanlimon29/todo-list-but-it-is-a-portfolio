@@ -42,6 +42,9 @@
     <ClCompile Include="StackSim.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="QueueSim.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ascii_Finder.h">
@@ -66,6 +69,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="StackSim.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="QueueSim.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

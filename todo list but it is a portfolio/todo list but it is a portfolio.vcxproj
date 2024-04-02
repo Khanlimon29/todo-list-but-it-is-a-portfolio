@@ -135,6 +135,7 @@
     </ClCompile>
     <ClCompile Include="PasswordGen.cpp" />
     <ClCompile Include="PrimeNumb.cpp" />
+    <ClCompile Include="QueueSim.cpp" />
     <ClCompile Include="RandNumb.cpp" />
     <ClCompile Include="RandomNumberGame.cpp" />
     <ClCompile Include="StackSim.cpp" />
@@ -145,6 +146,7 @@
     <ClInclude Include="Calc.h" />
     <ClInclude Include="PasswordGen.h" />
     <ClInclude Include="PrimeNumb.h" />
+    <ClInclude Include="QueueSim.h" />
     <ClInclude Include="RandNumb.h" />
     <ClInclude Include="RandomNumberGame.h" />
     <ClInclude Include="StackSim.h" />
