@@ -18,7 +18,7 @@
 #include "QueueSim.h"
 
 using namespace std;
-
+HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 // Структура для хранения задач
 struct Todo {
     int check;
@@ -73,15 +73,23 @@ int Done(vector<Todo> todos, int NumbOfOpt) {
 
 // Функция для отрисовки одной строчки
 void LineDraw(vector<Todo> todos, int currOpt, int i) {
+
     if (i == size_t(currOpt)) cout << "> ";
     else cout << "  ";
 
-    if (todos[i].check == 0)
-        cout << "TODO";
-    else if (todos[i].check == 1)
+    if (todos[i].check == 0) {
+        SetConsoleTextAttribute(hConsole, 12);
+        cout << "TODO";  
+    }
+    else if (todos[i].check == 1) {
+        SetConsoleTextAttribute(hConsole, 6);
         cout << "WIP ";
-    else if (todos[i].check == 2)
+    }
+    else if (todos[i].check == 2) {
+        SetConsoleTextAttribute(hConsole, 10);
         cout << "DONE";
+    }
+    SetConsoleTextAttribute(hConsole, 15);
 
     cout << " | ";
     cout << i << ".";
@@ -99,11 +107,16 @@ void PercentageDraw(vector<Todo> todos, int numbOfOpt) {
     int barWidth = 50;
     int progress = barWidth * DonePercentage / 100;
     cout << "Прогресс: [";
+    SetConsoleTextAttribute(hConsole, 2);
     for (int i = 0; i < barWidth; ++i) {
         if (i < progress) cout << "=";
         else cout << " ";
     }
-    cout << "] " << DonePercentage << "%";
+    SetConsoleTextAttribute(hConsole, 15);
+    cout << "] ";
+    SetConsoleTextAttribute(hConsole, 2);
+    cout << DonePercentage << "%";
+    SetConsoleTextAttribute(hConsole, 15);
     if (DonePercentage == 100) cout << " Sheeeeeeeeeeeeeeeeeeeeeeesh ";
     cout << "\n\n";
 }
