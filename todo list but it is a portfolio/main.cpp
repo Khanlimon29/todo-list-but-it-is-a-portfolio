@@ -6,6 +6,7 @@
 #include <Windows.h>
 #include <conio.h>
 #include <sstream>
+#include "gotoxy.h"
 #include "Ascii_Finder.h"
 #include "Calc.h"
 #include "tic_tac_toe.h"
@@ -23,14 +24,6 @@ struct Todo {
     int check;
     string task;
 };
-
-// Функция для перемещения курсора
-void gotoxy(int x, int y) {
-    COORD coord;
-    coord.X = x;
-    coord.Y = y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-}
 
 // Функция для чтения списка задач из файла
 vector<Todo> ReadTodoListFromFile(string filename) {

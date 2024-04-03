@@ -129,6 +129,7 @@
   <ItemGroup>
     <ClCompile Include="Ascii_Finder.cpp" />
     <ClCompile Include="Calc.cpp" />
+    <ClCompile Include="gotoxy.cpp" />
     <ClCompile Include="main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp17</LanguageStandard>
@@ -144,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="Ascii_Finder.h" />
     <ClInclude Include="Calc.h" />
+    <ClInclude Include="gotoxy.h" />
     <ClInclude Include="PasswordGen.h" />
     <ClInclude Include="PrimeNumb.h" />
     <ClInclude Include="QueueSim.h" />

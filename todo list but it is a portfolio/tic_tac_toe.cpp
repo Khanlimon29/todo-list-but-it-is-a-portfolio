@@ -1,17 +1,11 @@
 #include "tic_tac_toe.h"
+#include "gotoxy.h"
 #include <iostream>
 #include <conio.h>
-#include <Windows.h>
 #include <vector>
 
 using namespace std;
 
-void gotoxy_TTT(int x, int y) {
-	COORD coord;
-	coord.X = x;
-	coord.Y = y;
-	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), coord);
-}
 
 bool WinCheck(string game[3][3]) {
     // Строки
@@ -50,7 +44,7 @@ int tic_tac() {
     bool cross = true;
     cout << "↑↓→← - управление по полю, Enter - установка знака (X первый)\n\n";
     cout << "    |   |   \n -----------\n    |   |   \n -----------\n    |   |   ";
-    gotoxy_TTT(currOptX, currOptY + 4);
+    gotoxy(currOptX, currOptY + 4);
     while (running) {
         if (_kbhit()) {
             keyT = _getch();
@@ -58,25 +52,25 @@ int tic_tac() {
             case 72: // Up
             {
                 currOptY = (currOptY - 2 + numbOfOptY) % numbOfOptY;
-                gotoxy_TTT(currOptX, currOptY + 4);
+                gotoxy(currOptX, currOptY + 4);
                 break;
             }
             case 80: // Down
             {
                 currOptY = (currOptY + 2 + numbOfOptY) % numbOfOptY;
-                gotoxy_TTT(currOptX, currOptY + 4);
+                gotoxy(currOptX, currOptY + 4);
                 break;
             }
             case 77: // right 
             {
                 currOptX = (currOptX + 4 + numbOfOptX) % numbOfOptX;
-                gotoxy_TTT(currOptX, currOptY + 4);
+                gotoxy(currOptX, currOptY + 4);
                 break;
             }
             case 75: // left
             {
                 currOptX = (currOptX - 4 + numbOfOptX) % numbOfOptX;
-                gotoxy_TTT(currOptX, currOptY + 4);
+                gotoxy(currOptX, currOptY + 4);
                 break;
             }
 
@@ -103,7 +97,7 @@ int tic_tac() {
                 if (step >= 5) {
                     if (WinCheck(game)) {
                         running = false;
-                        gotoxy_TTT(0,10);
+                        gotoxy(0,10);
                         cout << "Победил ";
                         if (!cross) cout << "первый игрок (X)";
                         if (cross) cout << "второй игрок (O)";
@@ -112,18 +106,18 @@ int tic_tac() {
                     else if (step == 9 && running == true)
                     {
                         running = false;
-                        gotoxy_TTT(0, 10);
+                        gotoxy(0, 10);
                         cout << "Ничья\nНажмите на любую кнопку для выхода";
                     }
                 }
-                gotoxy_TTT(currOptX, currOptY + 4);
+                gotoxy(currOptX, currOptY + 4);
                 break;
             }
 
             case 27: // Esc
             {
                 running = false;
-                gotoxy_TTT(0, 9);
+                gotoxy(0, 9);
                 cout << "Игра заверешена\nНажмите на любую кнопку для выхода";
                 break;
 
