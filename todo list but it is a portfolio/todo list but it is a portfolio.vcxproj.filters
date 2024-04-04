@@ -48,6 +48,9 @@
     <ClCompile Include="gotoxy.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="ScreenSaver.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ascii_Finder.h">
@@ -78,6 +81,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="gotoxy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenSaver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

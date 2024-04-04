@@ -16,6 +16,7 @@
 #include "RandomNumberGame.h"
 #include "StackSim.h"
 #include "QueueSim.h"
+#include "ScreenSaver.h"
 
 using namespace std;
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -234,6 +235,9 @@ int main() {
                 }
                 else if (currOpt == 7) {
                     RandomNumberGame();
+                }
+                else if (currOpt == 8) {
+                    Saver();
                 }
                 else if (currOpt == 9) {
                     StackSimulator();
