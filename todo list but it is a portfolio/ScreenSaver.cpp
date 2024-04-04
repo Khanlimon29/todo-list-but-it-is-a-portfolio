@@ -49,28 +49,29 @@ void DrawLogo(int x, int y) {
 
 }
 
-void ClearScreen() {
-	gotoxy(1, 5);
-	for (int i =  4; i < ScreenSizeY + 4; i++) {
-		for (int j = 1; j < ScreenSizeX; j++) {
+void ClearLogo(int x, int y) {
+	for (int i = 0; i < LogoSizeY; i++) {
+		gotoxy(x, y + i + OffsetY);
+		for (int j = 0; j < LogoSizeX; j++) {
 			cout << " ";
 		}
-		gotoxy(1, i);
 	}
 }
-
 
 void Saver() {
 	cout << "Для запуска анимации нажмите на любую кнопку, для завершения нажмите ESC";
 	char key;
-	int LogoX1 = 60; // координаты верхнего левого угла
+	int LogoX1 = 60; // Координаты верхнего левого угла
 	int LogoY1 = 12;
-	int LogoX2 = 60 + LogoSizeX; // координаты нижнего правого угла
-	int LogoY2 = 12 + LogoSizeY;
-	int DirectionX = 1; // Направление по оси X: 1 вправо, -1 влево
-	int DirectionY = 1; // Направление по оси Y: 1 вниз, -1 вверх
+	int LogoX2 = LogoX1 + LogoSizeX; // Координаты нижнего правого угла
+	int LogoY2 = LogoY1 + LogoSizeY;
+	int DirectionX = 1; // 1 вправо, -1 влево
+	int DirectionY = 1; // 1 вниз, -1 вверх
+	int hits = 0;
 	DrawScreen();
 	DrawLogo(LogoX1, LogoY1);
+	gotoxy(0, 34);
+	cout << "Количество ударов об угол: 0";
 	_getch();
 
 	while (true) {
@@ -78,8 +79,8 @@ void Saver() {
 			key = _getch();
 			if (key == 27) break;
 		}
-		ClearScreen();
-		// Перемещение логотипа
+		ClearLogo(LogoX1, LogoY1);
+
 		LogoX1 += DirectionX;
 		LogoX2 += DirectionX;
 		LogoY1 += DirectionY;
@@ -89,13 +90,21 @@ void Saver() {
 		if (LogoX1 <= OffsetX || LogoX2 >= ScreenSizeX - 1 + OffsetX) {
 			DirectionX *= -1;
 		}
-		// Отскок от стенок по вертикали
+		// Отскок от стенок по вертикали и проверка на удар об угол
 		if (LogoY1 <= OffsetY || LogoY2 >= ScreenSizeY - 1 + OffsetY) {
 			DirectionY *= -1;
+			if ((LogoX1 <= OffsetX && LogoY1 <= OffsetY) || (LogoX2 >= ScreenSizeX - 1 + OffsetX && LogoY1 <= OffsetY) ||
+				(LogoX1 <= OffsetX && LogoY2 >= ScreenSizeY - 1 + OffsetY) || (LogoX2 >= ScreenSizeX - 1 + OffsetX && LogoY2 >= ScreenSizeY - 1 + OffsetY)) { // wow...
+				hits++;
+				gotoxy(27, 34);
+				cout << "  ";
+				gotoxy(27, 34);
+				cout << hits;
+			}
 		}
 
-		// Отображение нового положения логотипа
 		DrawLogo(LogoX1, LogoY1);
-		Sleep(5);
+
+		Sleep(100);
 	}
 }
