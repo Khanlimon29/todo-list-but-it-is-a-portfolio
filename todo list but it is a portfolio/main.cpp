@@ -17,6 +17,7 @@
 #include "StackSim.h"
 #include "QueueSim.h"
 #include "ScreenSaver.h"
+#include "MultTable.h"
 
 using namespace std;
 HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
@@ -244,6 +245,9 @@ int main() {
                 }
                 else if (currOpt == 10) {
                     QueueSimulator();
+                }
+                else if (currOpt == 12) {
+                    TableTrainer();
                 }
                 else if (currOpt == 14) {
                     Finder();

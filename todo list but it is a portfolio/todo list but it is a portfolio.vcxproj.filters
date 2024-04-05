@@ -51,6 +51,9 @@
     <ClCompile Include="ScreenSaver.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="MultTable.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ascii_Finder.h">
@@ -84,6 +87,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ScreenSaver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MultTable.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

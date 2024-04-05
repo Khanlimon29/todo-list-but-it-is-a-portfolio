@@ -134,6 +134,7 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp17</LanguageStandard>
     </ClCompile>
+    <ClCompile Include="MultTable.cpp" />
     <ClCompile Include="PasswordGen.cpp" />
     <ClCompile Include="PrimeNumb.cpp" />
     <ClCompile Include="QueueSim.cpp" />
@@ -147,6 +148,7 @@
     <ClInclude Include="Ascii_Finder.h" />
     <ClInclude Include="Calc.h" />
     <ClInclude Include="gotoxy.h" />
+    <ClInclude Include="MultTable.h" />
     <ClInclude Include="PasswordGen.h" />
     <ClInclude Include="PrimeNumb.h" />
     <ClInclude Include="QueueSim.h" />
