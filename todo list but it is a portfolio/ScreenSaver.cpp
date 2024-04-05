@@ -2,6 +2,7 @@
 #include <iostream>
 #include <conio.h>
 #include "gotoxy.h"
+#include "RandNumb.h"
 
 using namespace std;
 
@@ -59,14 +60,20 @@ void ClearLogo(int x, int y) {
 }
 
 void Saver() {
+	RandomNumberGenerator rng;
 	cout << "Для запуска анимации нажмите на любую кнопку, для завершения нажмите ESC";
 	char key;
 	int LogoX1 = 60; // Координаты верхнего левого угла
 	int LogoY1 = 12;
 	int LogoX2 = LogoX1 + LogoSizeX; // Координаты нижнего правого угла
 	int LogoY2 = LogoY1 + LogoSizeY;
-	int DirectionX = 1; // 1 вправо, -1 влево
-	int DirectionY = 1; // 1 вниз, -1 вверх
+	int DirectionX;
+	int DirectionY;
+	if (rng.getRandomInRange(0, 10) < 5) DirectionX = 1; // 1 вправо, -1 влево
+	else DirectionX = -1;
+	if (rng.getRandomInRange(0, 10) < 5) DirectionY = 1; // 1 вправо, -1 влево
+	else DirectionY = -1;
+
 	int hits = 0;
 	DrawScreen();
 	DrawLogo(LogoX1, LogoY1);
