@@ -4,6 +4,7 @@
 #include "RandNumb.h"
 #include <chrono>
 #include <iomanip>
+#include "setcolor.h"
 using namespace std;
 
 void TableTrainer() {
@@ -33,23 +34,31 @@ void TableTrainer() {
 				cout << "Введите значение повторно: ";
 				cin >> answer;
 			}
-			if (answer != a * b) cout << "Неверно\n";
+			if (answer != a * b) {
+				SetColor(31); // Красный
+				cout << "Неверно\n";
+				SetColor(0);
+			}
 		}
+		SetColor(32); // Зелёный 
 		cout << "Верно\n";
+		SetColor(0);
 	}
 	auto end = chrono::high_resolution_clock::now();
 	auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
-	auto Avarageduration = duration.count() / quantity;
+	
 
 	int Minutes = duration.count() / 60000;
 	int Seconds = (duration.count() % 60000) / 1000;
 	int Milliseconds = duration.count() % 1000;
-
-	int AvarageSeconds = Avarageduration % 60000 / 1000;
-	int AvarageMilliseconds = Avarageduration % 1000;
-
 	cout << "\nЗатраченное время " << Minutes << ":" << setw(2) << setfill('0') << Seconds << ":" << setw(3) << setfill('0') << Milliseconds << " минут\n";
-	cout << "На один пример в среднем уходит " << AvarageSeconds << "." << setw(3) << setfill('0') << AvarageMilliseconds << " секунд\n";
+	
+	if (quantity > 1) {
+		auto Avarageduration = duration.count() / quantity;
+		int AvarageSeconds = Avarageduration % 60000 / 1000;
+		int AvarageMilliseconds = Avarageduration % 1000;
+		cout << "На один пример в среднем уходит " << AvarageSeconds << "." << setw(3) << setfill('0') << AvarageMilliseconds << " секунд\n";
+	}
 
 	cout << "\nНажмите на любую кнопку для продолжения";
 	_getch();
