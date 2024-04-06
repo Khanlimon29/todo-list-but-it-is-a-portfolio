@@ -3,7 +3,6 @@
 #include <string>
 #include <vector>
 #include <stack>
-#include <Windows.h>
 #include <conio.h>
 #include <sstream>
 #include "gotoxy.h"
@@ -18,9 +17,9 @@
 #include "QueueSim.h"
 #include "ScreenSaver.h"
 #include "MultTable.h"
+#include "setcolor.h"
 
 using namespace std;
-HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
 // Структура для хранения задач
 struct Todo {
     int check;
@@ -80,18 +79,18 @@ void LineDraw(vector<Todo> todos, int currOpt, int i) {
     else cout << "  ";
 
     if (todos[i].check == 0) {
-        SetConsoleTextAttribute(hConsole, 12);
-        cout << "TODO";  
+        SetColor(31);
+        cout << "TODO";         
     }
     else if (todos[i].check == 1) {
-        SetConsoleTextAttribute(hConsole, 6);
+        SetColor(33);
         cout << "WIP ";
     }
     else if (todos[i].check == 2) {
-        SetConsoleTextAttribute(hConsole, 10);
+        SetColor(32);
         cout << "DONE";
     }
-    SetConsoleTextAttribute(hConsole, 15);
+    SetColor(0);
 
     cout << " | ";
     cout << i << ".";
@@ -109,16 +108,16 @@ void PercentageDraw(vector<Todo> todos, int numbOfOpt) {
     int barWidth = 50;
     int progress = barWidth * DonePercentage / 100;
     cout << "Прогресс: [";
-    SetConsoleTextAttribute(hConsole, 2);
+    SetColor(32);
     for (int i = 0; i < barWidth; ++i) {
         if (i < progress) cout << "=";
         else cout << " ";
     }
-    SetConsoleTextAttribute(hConsole, 15);
+    SetColor(0);
     cout << "] ";
-    SetConsoleTextAttribute(hConsole, 2);
+    SetColor(32);
     cout << DonePercentage << "%";
-    SetConsoleTextAttribute(hConsole, 15);
+    SetColor(0);
     if (DonePercentage == 100) cout << " Sheeeeeeeeeeeeeeeeeeeeeeesh ";
     cout << "\n\n";
 }

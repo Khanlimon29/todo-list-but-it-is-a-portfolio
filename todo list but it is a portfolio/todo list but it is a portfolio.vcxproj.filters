@@ -54,6 +54,9 @@
     <ClCompile Include="MultTable.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="setcolor.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ascii_Finder.h">
@@ -90,6 +93,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MultTable.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="setcolor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
