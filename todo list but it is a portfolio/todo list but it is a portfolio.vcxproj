@@ -144,6 +144,7 @@
     <ClCompile Include="RandomNumberGame.cpp" />
     <ClCompile Include="ScreenSaver.cpp" />
     <ClCompile Include="setcolor.cpp" />
+    <ClCompile Include="Sorts.cpp" />
     <ClCompile Include="StackSim.cpp" />
     <ClCompile Include="tic_tac_toe.cpp" />
   </ItemGroup>
@@ -159,6 +160,7 @@
     <ClInclude Include="RandomNumberGame.h" />
     <ClInclude Include="ScreenSaver.h" />
     <ClInclude Include="setcolor.h" />
+    <ClInclude Include="Sorts.h" />
     <ClInclude Include="StackSim.h" />
     <ClInclude Include="tic_tac_toe.h" />
   </ItemGroup>
