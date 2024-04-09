@@ -3,6 +3,7 @@
 #include <conio.h>
 #include "gotoxy.h"
 #include "RandNumb.h"
+#include <windows.h>
 
 using namespace std;
 
