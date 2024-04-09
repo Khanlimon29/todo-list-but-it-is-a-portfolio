@@ -253,7 +253,7 @@ int main() {
                     Finder();
                 }
                 else if (currOpt == 24) {
-                    Sorts();  // TODO: Хронометр и визуализация 
+                    Sorts();  // TODO: Визуализация 
                 }
                 MenuDraw(todos, currOpt, numbOfOpt);
                 break;

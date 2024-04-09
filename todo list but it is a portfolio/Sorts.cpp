@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <conio.h>
+#include <chrono>
 
 using namespace std;
 
@@ -26,8 +27,9 @@ void QuickSort(vector<int>& Array, int left, int right) {
     }
 }
 
-void BubbleSort(vector<int>& Array) {
+void BubbleSort(vector<int>& Array, double& time) {
     int n = Array.size();
+    auto start = chrono::high_resolution_clock::now();
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {
             if (Array[j] > Array[j + 1]) {
@@ -35,6 +37,9 @@ void BubbleSort(vector<int>& Array) {
             }
         }
     }
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
+    time = duration.count() / 1e6;
 }
 
 void Merge(vector<int>& Array, int left, int mid, int right) {
@@ -68,6 +73,7 @@ void Merge(vector<int>& Array, int left, int mid, int right) {
 }
 
 void MergeSort(vector<int>& Array, int left, int right) {
+    auto start = chrono::high_resolution_clock::now();
     if (left < right) {
         int mid = left + (right - left) / 2;
         MergeSort(Array, left, mid);
@@ -76,8 +82,9 @@ void MergeSort(vector<int>& Array, int left, int right) {
     }
 }
 
-void InsertionSort(vector<int>& Array) {
+void InsertionSort(vector<int>& Array, double& time) {
     int n = Array.size();
+    auto start = chrono::high_resolution_clock::now();
     for (int i = 1; i < n; i++) {
         int key = Array[i];
         int j = i - 1;
@@ -87,10 +94,14 @@ void InsertionSort(vector<int>& Array) {
         }
         Array[j + 1] = key;
     }
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
+    time = duration.count() / 1e6;
 }
 
-void ShellSort(vector<int>& Array) {
+void ShellSort(vector<int>& Array, double& time) {
     int n = Array.size();
+    auto start = chrono::high_resolution_clock::now();
     for (int gap = n / 2; gap > 0; gap /= 2) {
         for (int i = gap; i < n; i++) {
             int temp = Array[i];
@@ -101,10 +112,14 @@ void ShellSort(vector<int>& Array) {
             Array[j] = temp;
         }
     }
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
+    time = duration.count() / 1e6;
 }
 
-void SelectionSort(vector<int>& Array) {
+void SelectionSort(vector<int>& Array, double& time) {
     int n = Array.size();
+    auto start = chrono::high_resolution_clock::now();
     for (int i = 0; i < n - 1; i++) {
         int min_idx = i;
         for (int j = i + 1; j < n; j++) {
@@ -114,6 +129,9 @@ void SelectionSort(vector<int>& Array) {
         }
         swap(Array[i], Array[min_idx]);
     }
+    auto end = chrono::high_resolution_clock::now();
+    auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
+    time = duration.count() / 1e6;
 }
 
 vector<int> RandomArray(int Size) {
@@ -148,44 +166,56 @@ void Sorts() {
     cout << "\nНажмите на нужную цифру для управления:\n1. Быстрая сортировка\n2. Сортировка пузырьком\n3. Сортировка слиянием\n4. Сортировка вставками\n5. Сортировка Шелла\n6. Сортировка выбором\n\nEnter. Задать массив из рандомных чисел\nEsc. Выход";
     bool running = true;
     char choice;
-
+    double time = 0;
     while (running) {
         choice = _getch();
         switch (choice) {
         case '1': {
             system("cls");
+            auto start = chrono::high_resolution_clock::now();
             QuickSort(Array, 0, Array.size() - 1);
+            auto end = chrono::high_resolution_clock::now();
+            auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
             SortMenu(Array);
+            cout << "\n\nВремя выполнения быстрой сортировки: " << duration.count() / 1e6 << " мс" << endl;
             break;
         }
         case '2': {
             system("cls");
-            BubbleSort(Array);
+            BubbleSort(Array, time);
             SortMenu(Array);
+            cout << "\n\nВремя выполнения сортировки пузырьком: " << time << " мс" << endl;
             break;
         }
         case '3': {
             system("cls");
+            auto start = chrono::high_resolution_clock::now();
             MergeSort(Array, 0, Array.size() - 1);
+            auto end = chrono::high_resolution_clock::now();
+            auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
             SortMenu(Array);
+            cout << "\n\nВремя выполнения сортировки слиянием: " << duration.count() / 1e6 << " мс" << endl;
             break;
         }
         case '4': {
             system("cls");
-            InsertionSort(Array);
+            InsertionSort(Array, time);
             SortMenu(Array);
+            cout << "\n\nВремя выполнения сортировки вставками: " << time << " мс" << endl;
             break;
         }
         case '5': {
             system("cls");
-            ShellSort(Array);
+            ShellSort(Array, time);
             SortMenu(Array);
+            cout << "\n\nВремя выполнения сортировки Шелла: " << time << " мс" << endl;
             break;
         }
         case '6': {
             system("cls");
-            SelectionSort(Array);
+            SelectionSort(Array, time);
             SortMenu(Array);
+            cout << "\n\nВремя выполнения сортировки выбором: " << time << " мс" << endl;
             break;
         }
         case 13: {
