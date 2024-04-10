@@ -183,14 +183,14 @@ int Calculator() {
         return 1;
     }
 
-    long double result = EvaluateExpression(Expression, error);
     if (error) {
         SetColor(31);
         cout << "Некорректное выражение!" << endl;
         SetColor(0);
     }
     else {
-        cout << "Результат: " << result << endl;
+        long double result = EvaluateExpression(Expression, error);
+        cout << "Результат: " << fixed << result << endl; // это было настолько просто............
     }
 
     cout << "\nНажмите на любую кнопку для продолжения";

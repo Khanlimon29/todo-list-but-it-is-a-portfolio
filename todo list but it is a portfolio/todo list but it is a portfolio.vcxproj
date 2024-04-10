@@ -131,6 +131,7 @@
     <ClCompile Include="Calc.cpp">
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Default</LanguageStandard>
     </ClCompile>
+    <ClCompile Include="Date.cpp" />
     <ClCompile Include="gotoxy.cpp" />
     <ClCompile Include="main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -151,6 +152,7 @@
   <ItemGroup>
     <ClInclude Include="Ascii_Finder.h" />
     <ClInclude Include="Calc.h" />
+    <ClInclude Include="Date.h" />
     <ClInclude Include="gotoxy.h" />
     <ClInclude Include="MultTable.h" />
     <ClInclude Include="PasswordGen.h" />
