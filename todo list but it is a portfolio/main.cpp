@@ -19,6 +19,7 @@
 #include "MultTable.h"
 #include "setcolor.h"
 #include "Sorts.h"
+#include "Date.h"
 
 using namespace std;
 // Структура для хранения задач
@@ -223,7 +224,7 @@ int main() {
                     ASCIIfinder();
                 }
                 else if (currOpt == 2) {
-                    Calculator(); // TODO: Исправить научную нотацию
+                    Calculator(); // TODO: Автоматический расчёт дробной части
                 }
                 else if (currOpt == 3) {
                     tic_tac();
@@ -251,6 +252,9 @@ int main() {
                 }
                 else if (currOpt == 14) {
                     Finder();
+                }
+                else if (currOpt == 19) { 
+                    DateFinder(); // TODO: Режим работы от текущих значений
                 }
                 else if (currOpt == 24) {
                     Sorts();  // TODO: Визуализация 

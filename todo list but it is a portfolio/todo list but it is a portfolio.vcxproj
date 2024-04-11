@@ -131,7 +131,9 @@
     <ClCompile Include="Calc.cpp">
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Default</LanguageStandard>
     </ClCompile>
-    <ClCompile Include="Date.cpp" />
+    <ClCompile Include="Date.cpp">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
     <ClCompile Include="gotoxy.cpp" />
     <ClCompile Include="main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
