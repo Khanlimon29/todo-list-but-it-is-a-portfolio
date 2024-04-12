@@ -61,7 +61,7 @@ void CalculateTimeDifferenceWithinDay(bool CurrentTime, int currentHour, int cur
     int minutes = (difference % 3600) / 60;
     int seconds = difference % 60;
 
-    cout << "Разница между временами: " << hours << " часов " << minutes << " минут " << seconds << " секунд\n";
+    cout << "Разница между временами: " << hours << " часов " << minutes << " минут " << seconds << " секунд\n"; //Todo: правильный вывод
     cout << "Нажмите на любую кнопку для продолжения";
     _getch();
 }
@@ -99,9 +99,15 @@ void CalculateDateDifferenceInDays(bool CurrentTime, int currentYear, int curren
     time_t time1_tt = mktime(&time1);
     time_t time2_tt = mktime(&time2);
 
-    int difference = abs(int(difftime(time2_tt, time1_tt) / (24 * 3600)));
+    int difference = difftime(time2_tt, time1_tt) / (24 * 3600);
+    int years = static_cast<int>(difference / 365);
+    int days = static_cast<int>(difference) % 365;
 
-    cout << "Разница между датами: " << difference << " дней\n";
+    cout << "Разница между датами: ";
+    if (years > 0) {
+        cout << years << " год "; //Todo: правильный вывод
+    }
+    cout << days << " дней\n";
     cout << "Нажмите на любую кнопку для продолжения";
     _getch();
 }
@@ -156,19 +162,26 @@ void CalculateDayDifferenceInSeconds(bool CurrentTime, int currentYear, int curr
     time_t time1_tt = mktime(&time1);
     time_t time2_tt = mktime(&time2);
 
-    int difference = abs(int(difftime(time2_tt, time1_tt)));
+    int difference = difftime(time2_tt, time1_tt);
 
-    int days = difference / (24 * 3600);
-    int remainingSeconds = difference % (24 * 3600);
+    int days = static_cast<int>(difference / (24 * 3600));
+    int remainingSeconds = static_cast<int>(difference) % (24 * 3600);
+    int years = days / 365;
+    days %= 365;
     int hours = remainingSeconds / 3600;
     remainingSeconds %= 3600;
     int minutes = remainingSeconds / 60;
     int seconds = remainingSeconds % 60;
 
-    cout << "Разница между днями: " << days << " дней, " << hours << " часов, " << minutes << " минут, " << seconds << " секунд\n";
+    cout << "Разница между днями: ";
+    if (years > 0) {
+        cout << years << " год "; //Todo: правильный вывод
+    }
+    cout << days << " дней, " << hours << " часов, " << minutes << " минут, " << seconds << " секунд\n";
     cout << "Нажмите на любую кнопку для продолжения";
     _getch();
 }
+
 
 void DateMenu(bool CurrentTime, int currentYear, int currentMonth, int currentDay, int currentHour, int currentMinute, int currentSecond) {
     cout << "Выбранный вариант: Программа для работы с датами и временем: Программа для выполнения операций с датами и временем, таких как расчет разницы между датами.\n\n";
