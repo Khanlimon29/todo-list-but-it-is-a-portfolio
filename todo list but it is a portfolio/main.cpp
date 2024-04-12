@@ -1,3 +1,4 @@
+//TODO: Поддержка киррилицы, у пользователя выводятся символы явно не из кириллицы лол
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -254,7 +255,7 @@ int main() {
                     Finder();
                 }
                 else if (currOpt == 19) { 
-                    DateFinder(); // TODO: Режим работы от текущих значений
+                    DateFinder(); // Правильный вывод в словах и вывод в годах при значении дней свыше 365
                 }
                 else if (currOpt == 24) {
                     Sorts();  // TODO: Визуализация 

@@ -25,14 +25,22 @@ bool IsValidDate(int year, int month, int day) {
     return day >= 1 && day <= maxDay;
 }
 
-void CalculateTimeDifferenceWithinDay() {
+void CalculateTimeDifferenceWithinDay(bool CurrentTime, int currentHour, int currentMinute, int currentSecond) {
     int h1, m1, s1;
-    cout << "Введите первое время (часы минуты секунды): ";
-    cin >> h1 >> m1 >> s1;
 
-    if (!IsValidTime(h1, m1, s1)) {
-        cout << "Некорректное время.\n";
-        return;
+    if (CurrentTime == true) {
+        h1 = currentHour;
+        m1 = currentMinute;
+        s1 = currentSecond;
+    }
+    else {
+        cout << "Введите первое время (часы минуты секунды): ";
+        cin >> h1 >> m1 >> s1;
+
+        if (!IsValidTime(h1, m1, s1)) {
+            cout << "Некорректное время.\n";
+            return;
+        }
     }
 
     int h2, m2, s2;
@@ -58,11 +66,18 @@ void CalculateTimeDifferenceWithinDay() {
     _getch();
 }
 
-void CalculateDateDifferenceInDays() {
+void CalculateDateDifferenceInDays(bool CurrentTime, int currentYear, int currentMonth, int currentDay) {
     int year1, month1, day1;
-    cout << "Введите первую дату (год месяц день): ";
-    cin >> year1 >> month1 >> day1;
 
+    if (CurrentTime == true) {
+        year1 = currentYear;
+        month1 = currentMonth;
+        day1 = currentDay;
+    }
+    else {
+        cout << "Введите первую дату (год месяц день): ";
+        cin >> year1 >> month1 >> day1;
+    }
     if (!IsValidDate(year1, month1, day1)) {
         cout << "Некорректная дата.\n";
         return;
@@ -74,6 +89,7 @@ void CalculateDateDifferenceInDays() {
 
     if (!IsValidDate(year2, month2, day2)) {
         cout << "Некорректная дата.\n";
+        _getch();
         return;
     }
 
@@ -90,19 +106,32 @@ void CalculateDateDifferenceInDays() {
     _getch();
 }
 
-void CalculateDayDifferenceInSeconds() {
+void CalculateDayDifferenceInSeconds(bool CurrentTime, int currentYear, int currentMonth, int currentDay, int currentHour, int currentMinute, int currentSecond) {
     int year1, month1, day1, hour1, minute1, second1;
-    cout << "Введите первую дату и время (год месяц день часы минуты секунды): ";
-    cin >> year1 >> month1 >> day1 >> hour1 >> minute1 >> second1;
 
-    if (!IsValidDate(year1, month1, day1)) {
-        cout << "Некорректная дата.\n";
-        return;
+    if (CurrentTime == true) {
+        year1 = currentYear;
+        month1 = currentMonth;
+        day1 = currentDay;
+        hour1 = currentHour;
+        minute1 = currentMinute;
+        second1 = currentSecond;
     }
+    else {
+        cout << "Введите первую дату и время (год месяц день часы минуты секунды): ";
+        cin >> year1 >> month1 >> day1 >> hour1 >> minute1 >> second1;
 
-    if (!IsValidTime(hour1, minute1, second1)) {
-        cout << "Некорректное время.\n";
-        return;
+        if (!IsValidDate(year1, month1, day1)) {
+            cout << "Некорректная дата.\n";
+            _getch();
+            return;
+        }
+
+        if (!IsValidTime(hour1, minute1, second1)) {
+            cout << "Некорректное время.\n";
+            _getch();
+            return;
+        }
     }
 
     int year2, month2, day2, hour2, minute2, second2;
@@ -111,11 +140,13 @@ void CalculateDayDifferenceInSeconds() {
 
     if (!IsValidDate(year2, month2, day2)) {
         cout << "Некорректная дата.\n";
+        _getch();
         return;
     }
 
     if (!IsValidTime(hour2, minute2, second2)) {
         cout << "Некорректное время.\n";
+        _getch();
         return;
     }
 
@@ -139,50 +170,55 @@ void CalculateDayDifferenceInSeconds() {
     _getch();
 }
 
-void GetCurrentTimeAndDate() {
-    auto now = system_clock::to_time_t(system_clock::now());
-    tm* local_time = localtime(&now);
-    cout << "Текущая дата и время (Год, месяц, день, часы, минуты, секунды): "
-        << local_time->tm_year + 1900 << " " // Год
-        << local_time->tm_mon + 1 << " "     // Месяц
-        << local_time->tm_mday << " "        // День
-        << local_time->tm_hour << " "        // Час
-        << local_time->tm_min << " "         // Минута
-        << local_time->tm_sec << endl;       // Секунда
-}
-
-
-void DateMenu() {
+void DateMenu(bool CurrentTime, int currentYear, int currentMonth, int currentDay, int currentHour, int currentMinute, int currentSecond) {
     cout << "Выбранный вариант: Программа для работы с датами и временем: Программа для выполнения операций с датами и временем, таких как расчет разницы между датами.\n\n";
-    GetCurrentTimeAndDate();
-    cout << "1. Рассчитать разницу между временами в пределе одного дня\n2. Рассчитать разницу между датами в днях\n3. Рассчитать разницу между днями с точностью до секунд\nEnter. Текущее время и дата\nEsc. Выход";
+    cout << "Режим работы: ";
+    if (CurrentTime == true) cout << "От текущего времени";
+    else cout << "От заданного времени";
+    cout << "\nТекущая дата и время (Год, месяц, день, часы, минуты, секунды): ";
+    cout << currentYear << " " << currentMonth << " " << currentDay << " " << currentHour << " " << currentMinute << " " << currentSecond << "\n\n";
+    cout << "1. Рассчитать разницу между временами в пределе одного дня\n2. Рассчитать разницу между датами в днях\n3. Рассчитать разницу между днями с точностью до секунд\n\nEnter. Изменение режима работы\nEsc. Выход";
 }
 
 void DateFinder() {
+    auto now = system_clock::to_time_t(system_clock::now());
+    tm* local_time = localtime(&now);
+    int currentYear = local_time->tm_year + 1900;
+    int currentMonth = local_time->tm_mon + 1;
+    int currentDay = local_time->tm_mday;
+    int currentHour = local_time->tm_hour;
+    int currentMinute = local_time->tm_min;
+    int currentSecond = local_time->tm_sec;
+    bool CurrentTime = false;
     char choice;
     bool running = true;
     while (running) {
         system("cls");
-        DateMenu();
+        DateMenu(CurrentTime, currentYear, currentMonth, currentDay, currentHour, currentMinute, currentSecond);
         choice = _getch();
         switch (choice) {
         case '1': {
             system("cls");
-            CalculateTimeDifferenceWithinDay();
+            CalculateTimeDifferenceWithinDay(CurrentTime, currentHour, currentMinute, currentSecond);
             break;
         }
         case '2': {
             system("cls");
-            CalculateDateDifferenceInDays();
+            CalculateDateDifferenceInDays(CurrentTime, currentYear, currentMonth, currentDay);
             break;
         }
         case '3': {
             system("cls");
-            CalculateDayDifferenceInSeconds();
+            CalculateDayDifferenceInSeconds(CurrentTime, currentYear, currentMonth, currentDay, currentHour, currentMinute, currentSecond);
             break;
         }
         case 27: {
             running = false;
+            break;
+        }
+        case 13: {
+            system("cls");
+            CurrentTime = !CurrentTime;
             break;
         }
         }
