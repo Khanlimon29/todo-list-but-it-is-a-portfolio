@@ -4,6 +4,7 @@
 #include <ratio>
 #include <cmath>
 #include <conio.h>
+#include <iomanip>
 
 using namespace std;
 using namespace chrono;
@@ -39,6 +40,7 @@ void CalculateTimeDifferenceWithinDay(bool CurrentTime, int currentHour, int cur
 
         if (!IsValidTime(h1, m1, s1)) {
             cout << "Некорректное время.\n";
+            _getch();
             return;
         }
     }
@@ -49,6 +51,7 @@ void CalculateTimeDifferenceWithinDay(bool CurrentTime, int currentHour, int cur
 
     if (!IsValidTime(h2, m2, s2)) {
         cout << "Некорректное время.\n";
+        _getch();
         return;
     }
 
@@ -61,7 +64,9 @@ void CalculateTimeDifferenceWithinDay(bool CurrentTime, int currentHour, int cur
     int minutes = (difference % 3600) / 60;
     int seconds = difference % 60;
 
-    cout << "Разница между временами: " << hours << " часов " << minutes << " минут " << seconds << " секунд\n"; //Todo: правильный вывод
+    cout << "Разница между временами: " << setfill('0') << setw(2) << h1 << ":" << setw(2) << m1 << ":" << setw(2) << s1 << " и ";
+    cout << setfill('0') << setw(2) << h2 << ":" << setw(2) << m2 << ":" << setw(2) << s2 << " равна ";
+    cout << setfill('0') << setw(2) << hours << ":" << setw(2) << minutes << ":" << setw(2) << seconds << endl;
     cout << "Нажмите на любую кнопку для продолжения";
     _getch();
 }
@@ -75,17 +80,18 @@ void CalculateDateDifferenceInDays(bool CurrentTime, int currentYear, int curren
         day1 = currentDay;
     }
     else {
-        cout << "Введите первую дату (год месяц день): ";
-        cin >> year1 >> month1 >> day1;
+        cout << "Введите первую дату (день месяц день): ";
+        cin >> day1 >> month1 >> year1;
     }
     if (!IsValidDate(year1, month1, day1)) {
         cout << "Некорректная дата.\n";
+        _getch();
         return;
     }
 
     int year2, month2, day2;
-    cout << "Введите вторую дату (год месяц день): ";
-    cin >> year2 >> month2 >> day2;
+    cout << "Введите вторую дату (день месяц день): ";
+    cin >> day2 >> month2 >> year2;
 
     if (!IsValidDate(year2, month2, day2)) {
         cout << "Некорректная дата.\n";
@@ -100,15 +106,50 @@ void CalculateDateDifferenceInDays(bool CurrentTime, int currentYear, int curren
     time_t time2_tt = mktime(&time2);
 
     int difference = difftime(time2_tt, time1_tt) / (24 * 3600);
-    int years = static_cast<int>(difference / 365);
-    int days = static_cast<int>(difference) % 365;
+    int years = difference / 365;
+    int months = (difference % 365) / 30;
+    int days = (difference % 365) % 30;
 
-    cout << "Разница между датами: ";
+    cout << "Разница между датами: " << setfill('0') << setw(2) << day1 << "." << setw(2) << month1 << "." << setw(2) << year1 << " и ";
+    cout << setfill('0') << setw(2) << day2 << "." << setw(2) << month2 << "." << setw(2) << year2 << ": ";
+
     if (years > 0) {
-        cout << years << " год "; //Todo: правильный вывод
+        cout << years << " ";
+        if (years == 1 || (years > 20 && years % 10 == 1)) {
+            cout << "год, ";
+        }
+        else if ((years >= 2 && years <= 4) || (years > 20 && (years % 10 >= 2 && years % 10 <= 4))) {
+            cout << "года, ";
+        }
+        else {
+            cout << "лет, ";
+        }
     }
-    cout << days << " дней\n";
-    cout << "Нажмите на любую кнопку для продолжения";
+    if (months > 0) {
+        cout << months << " ";
+        if (months == 1 || (months > 20 && months % 10 == 1)) {
+            cout << "месяц, ";
+        }
+        else if ((months >= 2 && months <= 4) || (months > 20 && (months % 10 >= 2 && months % 10 <= 4))) {
+            cout << "месяца, ";
+        }
+        else {
+            cout << "месяцев, ";
+        }
+    }
+    if (days > 0) {
+        cout << days << " ";
+        if (days == 1 || (days > 20 && days % 10 == 1)) {
+            cout << "день ";
+        }
+        else if ((days >= 2 && days <= 4) || (days > 20 && (days % 10 >= 2 && days % 10 <= 4))) {
+            cout << "дня ";
+        }
+        else {
+            cout << "дней ";
+        }
+    }
+    cout << "\nНажмите на любую кнопку для продолжения";
     _getch();
 }
 
@@ -124,8 +165,8 @@ void CalculateDayDifferenceInSeconds(bool CurrentTime, int currentYear, int curr
         second1 = currentSecond;
     }
     else {
-        cout << "Введите первую дату и время (год месяц день часы минуты секунды): ";
-        cin >> year1 >> month1 >> day1 >> hour1 >> minute1 >> second1;
+        cout << "Введите первую дату и время (день месяц год часы минуты секунды): ";
+        cin >> day1 >> month1 >> year1 >> hour1 >> minute1 >> second1;
 
         if (!IsValidDate(year1, month1, day1)) {
             cout << "Некорректная дата.\n";
@@ -141,8 +182,8 @@ void CalculateDayDifferenceInSeconds(bool CurrentTime, int currentYear, int curr
     }
 
     int year2, month2, day2, hour2, minute2, second2;
-    cout << "Введите вторую дату и время (год месяц день часы минуты секунды): ";
-    cin >> year2 >> month2 >> day2 >> hour2 >> minute2 >> second2;
+    cout << "Введите вторую дату и время (день месяц год часы минуты секунды): ";
+    cin >> day2 >> month2 >> year2 >> hour2>> minute2 >> second2;
 
     if (!IsValidDate(year2, month2, day2)) {
         cout << "Некорректная дата.\n";
@@ -164,8 +205,8 @@ void CalculateDayDifferenceInSeconds(bool CurrentTime, int currentYear, int curr
 
     int difference = difftime(time2_tt, time1_tt);
 
-    int days = static_cast<int>(difference / (24 * 3600));
-    int remainingSeconds = static_cast<int>(difference) % (24 * 3600);
+    int days = (difference / (24 * 3600));
+    int remainingSeconds = (difference) % (24 * 3600);
     int years = days / 365;
     days %= 365;
     int hours = remainingSeconds / 3600;
@@ -173,23 +214,73 @@ void CalculateDayDifferenceInSeconds(bool CurrentTime, int currentYear, int curr
     int minutes = remainingSeconds / 60;
     int seconds = remainingSeconds % 60;
 
-    cout << "Разница между днями: ";
+    cout << "Разница между днями и временем: " << setfill('0') << setw(2) << day1 << "." << setw(2) << month1 << "." << setw(2) << year1 << setw(2) << " " << hour1 << ":" << setw(2) << minute1 << ":" << setw(2) << second1 << " и ";
+        cout << setfill('0') << setw(2) << day2 << "." << setw(2) << month2 << "." << setw(2) << year2 << " " << setw(2) << hour2 << ":" << setw(2) << minute2 << ":" << setw(2) << second2 << ": ";
+
     if (years > 0) {
-        cout << years << " год "; //Todo: правильный вывод
+        cout << years << " ";
+        if (years == 1 || (years > 20 && years % 10 == 1)) {
+            cout << "год, ";
+        }
+        else if ((years >= 2 && years <= 4) || (years > 20 && (years % 10 >= 2 && years % 10 <= 4))) {
+            cout << "года, ";
+        }
+        else {
+            cout << "лет, ";
+        }
     }
-    cout << days << " дней, " << hours << " часов, " << minutes << " минут, " << seconds << " секунд\n";
-    cout << "Нажмите на любую кнопку для продолжения";
+    cout << days << " ";
+    if (days == 1 || (days > 20 && days % 10 == 1)) {
+        cout << "день, ";
+    }
+    else if ((days >= 2 && days <= 4) || (days > 20 && (days % 10 >= 2 && days % 10 <= 4))) {
+        cout << "дня, ";
+    }
+    else {
+        cout << "дней, ";
+    }
+    cout << hours << " ";
+    if (hours == 1 || hours == 21) {
+        cout << "час, ";
+    }
+    else if ((hours >= 2 && hours <= 4) || (hours >= 22 && hours <= 23) || (hours >= 0 && hours <= 4)) {
+        cout << "часа, ";
+    }
+    else {
+        cout << "часов, ";
+    }
+    cout << minutes << " ";
+    if (minutes == 1 || (minutes > 20 && minutes % 10 == 1)) {
+        cout << "минута, ";
+    }
+    else if ((minutes >= 2 && minutes <= 4) || (minutes > 20 && (minutes % 10 >= 2 && minutes % 10 <= 4))) {
+        cout << "минуты, ";
+    }
+    else {
+        cout << "минут, ";
+    }
+    cout << seconds << " ";
+    if (seconds == 1 || (seconds > 20 && seconds % 10 == 1)) {
+        cout << "секунда ";
+    }
+    else if ((seconds >= 2 && seconds <= 4) || (seconds > 20 && (seconds % 10 >= 2 && seconds % 10 <= 4))) {
+        cout << "секунды ";
+    }
+    else {
+        cout << "секунд ";
+    }
+    cout << "\nНажмите на любую кнопку для продолжения";
     _getch();
 }
 
-
 void DateMenu(bool CurrentTime, int currentYear, int currentMonth, int currentDay, int currentHour, int currentMinute, int currentSecond) {
     cout << "Выбранный вариант: Программа для работы с датами и временем: Программа для выполнения операций с датами и временем, таких как расчет разницы между датами.\n\n";
-    cout << "Режим работы: ";
+    cout << "Режим работы (24H only): ";
     if (CurrentTime == true) cout << "От текущего времени";
     else cout << "От заданного времени";
-    cout << "\nТекущая дата и время (Год, месяц, день, часы, минуты, секунды): ";
-    cout << currentYear << " " << currentMonth << " " << currentDay << " " << currentHour << " " << currentMinute << " " << currentSecond << "\n\n";
+    cout << "\nТекущая дата и время (День, месяц, год, часы, минуты, секунды): ";
+    cout << setfill('0') << setw(2) << currentDay << "." << setw(2) << currentMonth << "." << currentYear << " "
+         << setw(2) << currentHour << ":" << setw(2) << currentMinute << ":" << setw(2) << currentSecond << "\n\n";
     cout << "1. Рассчитать разницу между временами в пределе одного дня\n2. Рассчитать разницу между датами в днях\n3. Рассчитать разницу между днями с точностью до секунд\n\nEnter. Изменение режима работы\nEsc. Выход";
 }
 
