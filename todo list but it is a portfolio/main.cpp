@@ -225,7 +225,7 @@ int main() {
                     ASCIIfinder();
                 }
                 else if (currOpt == 2) {
-                    Calculator(); // TODO: Автоматический расчёт дробной части
+                    Calculator();
                 }
                 else if (currOpt == 3) {
                     tic_tac();

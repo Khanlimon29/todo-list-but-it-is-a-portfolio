@@ -4,6 +4,7 @@
 #include <string>
 #include <conio.h> 
 #include "setcolor.h"
+#include <iomanip>
 
 using namespace std;
 
@@ -190,7 +191,8 @@ int Calculator() {
     }
     else {
         long double result = EvaluateExpression(Expression, error);
-        cout << "Результат: " << fixed << result << endl; // это было настолько просто............
+        int precision = (result == static_cast<long long>(result)) ? 0 : 6;
+        cout << "Результат: " << fixed << setprecision(precision) << result <<endl;
     }
 
     cout << "\nНажмите на любую кнопку для продолжения";
