@@ -64,10 +64,39 @@ void CalculateTimeDifferenceWithinDay(bool CurrentTime, int currentHour, int cur
     int minutes = (difference % 3600) / 60;
     int seconds = difference % 60;
 
-    cout << "Разница между временами: " << setfill('0') << setw(2) << h1 << ":" << setw(2) << m1 << ":" << setw(2) << s1 << " и ";
-    cout << setfill('0') << setw(2) << h2 << ":" << setw(2) << m2 << ":" << setw(2) << s2 << " равна ";
-    cout << setfill('0') << setw(2) << hours << ":" << setw(2) << minutes << ":" << setw(2) << seconds << endl;
-    cout << "Нажмите на любую кнопку для продолжения";
+    cout << "Разница между " << setfill('0') << setw(2) << h1 << ":" << setw(2) << m1 << ":" << setw(2) << s1 << " и ";
+    cout << setfill('0') << setw(2) << h2 << ":" << setw(2) << m2 << ":" << setw(2) << s2 << " составляет ";    
+    cout << hours << " ";
+    if (hours == 1 || hours == 21) {
+        cout << "час ";
+    }
+    else if ((hours >= 2 && hours <= 4) || (hours >= 22 && hours <= 23) || (hours >= 0 && hours <= 4)) {
+        cout << "часа ";
+    }
+    else {
+        cout << "часов ";
+    }
+    cout << minutes << " ";
+    if (minutes == 1 || (minutes > 20 && minutes % 10 == 1)) {
+        cout << "минута ";
+    }
+    else if ((minutes >= 2 && minutes <= 4) || (minutes > 20 && (minutes % 10 >= 2 && minutes % 10 <= 4))) {
+        cout << "минуты ";
+    }
+    else {
+        cout << "минут ";
+    }
+    cout << seconds << " ";
+    if (seconds == 1 || (seconds > 20 && seconds % 10 == 1)) {
+        cout << "секунда ";
+    }
+    else if ((seconds >= 2 && seconds <= 4) || (seconds > 20 && (seconds % 10 >= 2 && seconds % 10 <= 4))) {
+        cout << "секунды ";
+    }
+    else {
+        cout << "секунд ";
+    }
+    cout << "\nНажмите на любую кнопку для продолжения";
     _getch();
 }
 
@@ -80,7 +109,7 @@ void CalculateDateDifferenceInDays(bool CurrentTime, int currentYear, int curren
         day1 = currentDay;
     }
     else {
-        cout << "Введите первую дату (день месяц день): ";
+        cout << "Введите первую дату (день месяц год): ";
         cin >> day1 >> month1 >> year1;
     }
     if (!IsValidDate(year1, month1, day1)) {
@@ -90,7 +119,7 @@ void CalculateDateDifferenceInDays(bool CurrentTime, int currentYear, int curren
     }
 
     int year2, month2, day2;
-    cout << "Введите вторую дату (день месяц день): ";
+    cout << "Введите вторую дату (день месяц год): ";
     cin >> day2 >> month2 >> year2;
 
     if (!IsValidDate(year2, month2, day2)) {
@@ -110,31 +139,31 @@ void CalculateDateDifferenceInDays(bool CurrentTime, int currentYear, int curren
     int months = (difference % 365) / 30;
     int days = (difference % 365) % 30;
 
-    cout << "Разница между датами: " << setfill('0') << setw(2) << day1 << "." << setw(2) << month1 << "." << setw(2) << year1 << " и ";
-    cout << setfill('0') << setw(2) << day2 << "." << setw(2) << month2 << "." << setw(2) << year2 << ": ";
+    cout << "Разница между " << setfill('0') << setw(2) << day1 << "." << setw(2) << month1 << "." << setw(2) << year1 << " и ";
+    cout << setfill('0') << setw(2) << day2 << "." << setw(2) << month2 << "." << setw(2) << year2 << " составляет: ";
 
     if (years > 0) {
         cout << years << " ";
         if (years == 1 || (years > 20 && years % 10 == 1)) {
-            cout << "год, ";
+            cout << "год ";
         }
         else if ((years >= 2 && years <= 4) || (years > 20 && (years % 10 >= 2 && years % 10 <= 4))) {
-            cout << "года, ";
+            cout << "года ";
         }
         else {
-            cout << "лет, ";
+            cout << "лет ";
         }
     }
     if (months > 0) {
         cout << months << " ";
         if (months == 1 || (months > 20 && months % 10 == 1)) {
-            cout << "месяц, ";
+            cout << "месяц ";
         }
         else if ((months >= 2 && months <= 4) || (months > 20 && (months % 10 >= 2 && months % 10 <= 4))) {
-            cout << "месяца, ";
+            cout << "месяца ";
         }
         else {
-            cout << "месяцев, ";
+            cout << "месяцев ";
         }
     }
     if (days > 0) {
@@ -214,50 +243,50 @@ void CalculateDayDifferenceInSeconds(bool CurrentTime, int currentYear, int curr
     int minutes = remainingSeconds / 60;
     int seconds = remainingSeconds % 60;
 
-    cout << "Разница между днями и временем: " << setfill('0') << setw(2) << day1 << "." << setw(2) << month1 << "." << setw(2) << year1 << setw(2) << " " << hour1 << ":" << setw(2) << minute1 << ":" << setw(2) << second1 << " и ";
-        cout << setfill('0') << setw(2) << day2 << "." << setw(2) << month2 << "." << setw(2) << year2 << " " << setw(2) << hour2 << ":" << setw(2) << minute2 << ":" << setw(2) << second2 << ": ";
+    cout << "Разница между " << setfill('0') << setw(2) << day1 << "." << setw(2) << month1 << "." << setw(2) << year1 << setw(2) << " " << hour1 << ":" << setw(2) << minute1 << ":" << setw(2) << second1 << " и ";
+        cout << setfill('0') << setw(2) << day2 << "." << setw(2) << month2 << "." << setw(2) << year2 << " " << setw(2) << hour2 << ":" << setw(2) << minute2 << ":" << setw(2) << second2 << " составляет: ";
 
     if (years > 0) {
         cout << years << " ";
         if (years == 1 || (years > 20 && years % 10 == 1)) {
-            cout << "год, ";
+            cout << "год ";
         }
         else if ((years >= 2 && years <= 4) || (years > 20 && (years % 10 >= 2 && years % 10 <= 4))) {
-            cout << "года, ";
+            cout << "года ";
         }
         else {
-            cout << "лет, ";
+            cout << "лет ";
         }
     }
     cout << days << " ";
     if (days == 1 || (days > 20 && days % 10 == 1)) {
-        cout << "день, ";
+        cout << "день ";
     }
     else if ((days >= 2 && days <= 4) || (days > 20 && (days % 10 >= 2 && days % 10 <= 4))) {
-        cout << "дня, ";
+        cout << "дня ";
     }
     else {
-        cout << "дней, ";
+        cout << "дней ";
     }
     cout << hours << " ";
     if (hours == 1 || hours == 21) {
-        cout << "час, ";
+        cout << "час ";
     }
     else if ((hours >= 2 && hours <= 4) || (hours >= 22 && hours <= 23) || (hours >= 0 && hours <= 4)) {
-        cout << "часа, ";
+        cout << "часа ";
     }
     else {
-        cout << "часов, ";
+        cout << "часов ";
     }
     cout << minutes << " ";
     if (minutes == 1 || (minutes > 20 && minutes % 10 == 1)) {
-        cout << "минута, ";
+        cout << "минута ";
     }
     else if ((minutes >= 2 && minutes <= 4) || (minutes > 20 && (minutes % 10 >= 2 && minutes % 10 <= 4))) {
-        cout << "минуты, ";
+        cout << "минуты ";
     }
     else {
-        cout << "минут, ";
+        cout << "минут ";
     }
     cout << seconds << " ";
     if (seconds == 1 || (seconds > 20 && seconds % 10 == 1)) {
