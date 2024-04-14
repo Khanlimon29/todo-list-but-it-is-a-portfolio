@@ -105,7 +105,7 @@ void CalculateDateDifferenceInDays(bool CurrentTime, int currentYear, int curren
     time_t time1_tt = mktime(&time1);
     time_t time2_tt = mktime(&time2);
 
-    int difference = difftime(time2_tt, time1_tt) / (24 * 3600);
+    int difference = abs(difftime(time2_tt, time1_tt) / (24 * 3600)); // I  forgor abs :skull:
     int years = difference / 365;
     int months = (difference % 365) / 30;
     int days = (difference % 365) % 30;
@@ -203,7 +203,7 @@ void CalculateDayDifferenceInSeconds(bool CurrentTime, int currentYear, int curr
     time_t time1_tt = mktime(&time1);
     time_t time2_tt = mktime(&time2);
 
-    int difference = difftime(time2_tt, time1_tt);
+    int difference = abs(difftime(time2_tt, time1_tt)); // I  forgor abs :skull:
 
     int days = (difference / (24 * 3600));
     int remainingSeconds = (difference) % (24 * 3600);

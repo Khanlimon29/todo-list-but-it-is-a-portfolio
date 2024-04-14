@@ -255,7 +255,7 @@ int main() {
                     Finder();
                 }
                 else if (currOpt == 19) { 
-                    DateFinder(); // TODO: неправильный подсчёт разницы к прошлому (например разница между 2024 и 2001)
+                    DateFinder();
                 }
                 else if (currOpt == 24) {
                     Sorts();  // TODO: Визуализация 
