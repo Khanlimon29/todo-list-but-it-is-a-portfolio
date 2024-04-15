@@ -21,6 +21,7 @@
 #include "setcolor.h"
 #include "Sorts.h"
 #include "Date.h"
+#include "Converter.h"
 
 using namespace std;
 // Структура для хранения задач
@@ -253,6 +254,9 @@ int main() {
                 }
                 else if (currOpt == 14) {
                     Finder();
+                }
+                else if (currOpt == 15) {
+                    Converter();
                 }
                 else if (currOpt == 19) { 
                     DateFinder();
