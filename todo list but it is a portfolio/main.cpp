@@ -71,6 +71,9 @@ void WriteTodoListToFile(string filename, vector<Todo> todos) {
 int Done(vector<Todo> todos, int NumbOfOpt) {
     int done = 0;
     for (int i = 0; i < NumbOfOpt; i++) {
+        if (!todos[i].task.compare(0, 11, "Side quest:")) {
+            continue;
+        }
         if (todos[i].check == 2) done++;
     }
     return done;
@@ -108,7 +111,17 @@ void PercentageDraw(vector<Todo> todos, int numbOfOpt) {
     gotoxy(0, 2);
     cout << "                                                                                                   ";   // Костыль :3
     gotoxy(0, 2);
-    float DonePercentage = (static_cast<float>(Done(todos, numbOfOpt)) / numbOfOpt) * 100;
+    float DonePercentage = 0;
+    int totalTasks = 0;
+    for (size_t i = 0; i < todos.size(); ++i) {
+        if (!todos[i].task.compare(0, 11, "Side quest:")) {
+            continue; 
+        }
+        totalTasks++;
+    }
+    if (totalTasks > 0) {
+        DonePercentage = (static_cast<float>(Done(todos, numbOfOpt)) / totalTasks) * 100;
+    }
     int barWidth = 50;
     int progress = barWidth * DonePercentage / 100;
     cout << "Прогресс: [";
