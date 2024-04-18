@@ -27,9 +27,8 @@ void QuickSort(vector<int>& Array, int left, int right) {
     }
 }
 
-void BubbleSort(vector<int>& Array, double& time) {
+void BubbleSort(vector<int>& Array) {
     int n = Array.size();
-    auto start = chrono::high_resolution_clock::now();
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {
             if (Array[j] > Array[j + 1]) {
@@ -37,9 +36,6 @@ void BubbleSort(vector<int>& Array, double& time) {
             }
         }
     }
-    auto end = chrono::high_resolution_clock::now();
-    auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
-    time = duration.count() / 1e6;
 }
 
 void Merge(vector<int>& Array, int left, int mid, int right) {
@@ -73,7 +69,6 @@ void Merge(vector<int>& Array, int left, int mid, int right) {
 }
 
 void MergeSort(vector<int>& Array, int left, int right) {
-    auto start = chrono::high_resolution_clock::now();
     if (left < right) {
         int mid = left + (right - left) / 2;
         MergeSort(Array, left, mid);
@@ -82,9 +77,8 @@ void MergeSort(vector<int>& Array, int left, int right) {
     }
 }
 
-void InsertionSort(vector<int>& Array, double& time) {
+void InsertionSort(vector<int>& Array) {
     int n = Array.size();
-    auto start = chrono::high_resolution_clock::now();
     for (int i = 1; i < n; i++) {
         int key = Array[i];
         int j = i - 1;
@@ -94,14 +88,10 @@ void InsertionSort(vector<int>& Array, double& time) {
         }
         Array[j + 1] = key;
     }
-    auto end = chrono::high_resolution_clock::now();
-    auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
-    time = duration.count() / 1e6;
 }
 
-void ShellSort(vector<int>& Array, double& time) {
+void ShellSort(vector<int>& Array) {
     int n = Array.size();
-    auto start = chrono::high_resolution_clock::now();
     for (int gap = n / 2; gap > 0; gap /= 2) {
         for (int i = gap; i < n; i++) {
             int temp = Array[i];
@@ -112,14 +102,10 @@ void ShellSort(vector<int>& Array, double& time) {
             Array[j] = temp;
         }
     }
-    auto end = chrono::high_resolution_clock::now();
-    auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
-    time = duration.count() / 1e6;
 }
 
-void SelectionSort(vector<int>& Array, double& time) {
+void SelectionSort(vector<int>& Array) {
     int n = Array.size();
-    auto start = chrono::high_resolution_clock::now();
     for (int i = 0; i < n - 1; i++) {
         int min_idx = i;
         for (int j = i + 1; j < n; j++) {
@@ -129,9 +115,6 @@ void SelectionSort(vector<int>& Array, double& time) {
         }
         swap(Array[i], Array[min_idx]);
     }
-    auto end = chrono::high_resolution_clock::now();
-    auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
-    time = duration.count() / 1e6;
 }
 
 vector<int> RandomArray(int Size) {
@@ -172,50 +155,98 @@ void Sorts() {
         switch (choice) {
         case '1': {
             system("cls");
-            auto start = chrono::high_resolution_clock::now();
-            QuickSort(Array, 0, Array.size() - 1);
-            auto end = chrono::high_resolution_clock::now();
-            auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
-            SortMenu(Array);
-            cout << "\n\nВремя выполнения быстрой сортировки: " << duration.count() / 1e6 << " мс" << endl;
+            if (Array.size() >= 20) {
+                auto start = chrono::high_resolution_clock::now();
+                QuickSort(Array, 0, Array.size() - 1);
+                auto end = chrono::high_resolution_clock::now();
+                auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
+                SortMenu(Array);
+                cout << "\n\nВремя выполнения быстрой сортировки: " << duration.count() / 1e6 << " мс" << endl;
+            }
+            else {
+                QuickSort(Array, 0, Array.size() - 1);
+                SortMenu(Array);
+            }
             break;
         }
         case '2': {
             system("cls");
-            BubbleSort(Array, time);
-            SortMenu(Array);
-            cout << "\n\nВремя выполнения сортировки пузырьком: " << time << " мс" << endl;
+            if (Array.size() >= 20) {
+                auto start = chrono::high_resolution_clock::now();
+                BubbleSort(Array);
+                auto end = chrono::high_resolution_clock::now();
+                auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
+                SortMenu(Array);
+                cout << "\n\nВремя выполнения сортировки пузырьком: " << time << " мс" << endl;
+            }
+            else {
+                BubbleSort(Array);
+                SortMenu(Array);
+            }
             break;
         }
         case '3': {
             system("cls");
-            auto start = chrono::high_resolution_clock::now();
-            MergeSort(Array, 0, Array.size() - 1);
-            auto end = chrono::high_resolution_clock::now();
-            auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
-            SortMenu(Array);
-            cout << "\n\nВремя выполнения сортировки слиянием: " << duration.count() / 1e6 << " мс" << endl;
+            if (Array.size() >= 20) {
+                auto start = chrono::high_resolution_clock::now();
+                MergeSort(Array, 0, Array.size() - 1);
+                auto end = chrono::high_resolution_clock::now();
+                auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
+                SortMenu(Array);
+                cout << "\n\nВремя выполнения сортировки слиянием: " << duration.count() / 1e6 << " мс" << endl;
+            }
+            else {
+                MergeSort(Array, 0, Array.size() - 1);
+                SortMenu(Array);
+            }
             break;
         }
         case '4': {
             system("cls");
-            InsertionSort(Array, time);
-            SortMenu(Array);
-            cout << "\n\nВремя выполнения сортировки вставками: " << time << " мс" << endl;
+            if (Array.size() >= 20) {
+                auto start = chrono::high_resolution_clock::now();
+                InsertionSort(Array);
+                auto end = chrono::high_resolution_clock::now();
+                auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
+                SortMenu(Array);
+                cout << "\n\nВремя выполнения сортировки вставками: " << time << " мс" << endl;
+            }
+            else {
+                InsertionSort(Array);
+                SortMenu(Array);
+            }
             break;
         }
         case '5': {
             system("cls");
-            ShellSort(Array, time);
-            SortMenu(Array);
-            cout << "\n\nВремя выполнения сортировки Шелла: " << time << " мс" << endl;
+            if (Array.size() >= 20) {
+                auto start = chrono::high_resolution_clock::now();
+                ShellSort(Array);
+                auto end = chrono::high_resolution_clock::now();
+                auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
+                SortMenu(Array);
+                cout << "\n\nВремя выполнения сортировки Шелла: " << time << " мс" << endl;
+            }
+            else {
+                ShellSort(Array);
+                SortMenu(Array);
+            }
             break;
         }
         case '6': {
             system("cls");
-            SelectionSort(Array, time);
-            SortMenu(Array);
-            cout << "\n\nВремя выполнения сортировки выбором: " << time << " мс" << endl;
+            if (Array.size() >= 20) {
+                auto start = chrono::high_resolution_clock::now();
+                SelectionSort(Array);
+                auto end = chrono::high_resolution_clock::now();
+                auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
+                SortMenu(Array);
+                cout << "\n\nВремя выполнения сортировки выбором: " << time << " мс" << endl;
+            }
+            else {
+                SelectionSort(Array);
+                SortMenu(Array);
+            }
             break;
         }
         case 13: {
