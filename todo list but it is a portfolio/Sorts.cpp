@@ -4,12 +4,24 @@
 #include <vector>
 #include <conio.h>
 #include <chrono>
+#include "setcolor.h"
 
 using namespace std;
 
 vector<int> Array;
 
-void QuickSort(vector<int>& Array, int left, int right) {
+void PrintArrayWithColor(const vector<int>& Array, int idx1, int idx2) {
+    for (int i = 0; i < Array.size(); i++) {
+        if (i == idx1 || i == idx2) {
+            SetColor(31);
+        }
+        cout << Array[i] << " ";
+        SetColor(0);
+    }
+    cout << endl;
+}
+
+void QuickSort(vector<int>& Array, int left, int right, bool visual) {
     if (left < right) {
         int Pivot = Array[(left + right) / 2];
         int i = left, j = right;
@@ -18,21 +30,23 @@ void QuickSort(vector<int>& Array, int left, int right) {
             while (Array[j] > Pivot) j--;
             if (i <= j) {
                 swap(Array[i], Array[j]);
+                if (visual == true) PrintArrayWithColor(Array, i, j);
                 i++;
                 j--;
             }
         }
-        QuickSort(Array, left, j);
-        QuickSort(Array, i, right);
+        QuickSort(Array, left, j, visual);
+        QuickSort(Array, i, right, visual);
     }
 }
 
-void BubbleSort(vector<int>& Array) {
+void BubbleSort(vector<int>& Array, bool visual) {
     int n = Array.size();
     for (int i = 0; i < n - 1; i++) {
         for (int j = 0; j < n - i - 1; j++) {
             if (Array[j] > Array[j + 1]) {
                 swap(Array[j], Array[j + 1]);
+                if (visual) PrintArrayWithColor(Array, i, j);
             }
         }
     }
@@ -68,16 +82,17 @@ void Merge(vector<int>& Array, int left, int mid, int right) {
     }
 }
 
-void MergeSort(vector<int>& Array, int left, int right) {
+void MergeSort(vector<int>& Array, int left, int right, bool visual) {
     if (left < right) {
         int mid = left + (right - left) / 2;
-        MergeSort(Array, left, mid);
-        MergeSort(Array, mid + 1, right);
+        MergeSort(Array, left, mid, visual);
+        MergeSort(Array, mid + 1, right, visual);
         Merge(Array, left, mid, right);
+        if (visual) PrintArrayWithColor(Array, left, right);
     }
 }
 
-void InsertionSort(vector<int>& Array) {
+void InsertionSort(vector<int>& Array, bool visual) {
     int n = Array.size();
     for (int i = 1; i < n; i++) {
         int key = Array[i];
@@ -85,12 +100,13 @@ void InsertionSort(vector<int>& Array) {
         while (j >= 0 && Array[j] > key) {
             Array[j + 1] = Array[j];
             j--;
+            if (visual) PrintArrayWithColor(Array, i, j);
         }
         Array[j + 1] = key;
     }
 }
 
-void ShellSort(vector<int>& Array) {
+void ShellSort(vector<int>& Array, bool visual) {
     int n = Array.size();
     for (int gap = n / 2; gap > 0; gap /= 2) {
         for (int i = gap; i < n; i++) {
@@ -98,19 +114,21 @@ void ShellSort(vector<int>& Array) {
             int j;
             for (j = i; j >= gap && Array[j - gap] > temp; j -= gap) {
                 Array[j] = Array[j - gap];
+                if (visual) PrintArrayWithColor(Array, i, j);
             }
             Array[j] = temp;
         }
     }
 }
 
-void SelectionSort(vector<int>& Array) {
+void SelectionSort(vector<int>& Array, bool visual) {
     int n = Array.size();
     for (int i = 0; i < n - 1; i++) {
         int min_idx = i;
         for (int j = i + 1; j < n; j++) {
             if (Array[j] < Array[min_idx]) {
                 min_idx = j;
+                if (visual) PrintArrayWithColor(Array, i, j);
             }
         }
         swap(Array[i], Array[min_idx]);
@@ -139,32 +157,38 @@ void SortMenu(vector<int>& Array) {
     cout << "Массив: ";
     if (Array.size() == 0) cout << "Пусто";
     else PrintArray(Array);
-    cout << "\nНажмите на нужную цифру для управления:\n1. Быстрая сортировка\n2. Сортировка пузырьком\n3. Сортировка слиянием\n4. Сортировка вставками\n5. Сортировка Шелла\n6. Сортировка выбором\n\nEnter. Задать массив из рандомных чисел\nEsc. Выход";
+    cout << "\nНажмите на нужную цифру для управления:\n1. Быстрая сортировка\n2. Сортировка пузырьком\n3. Сортировка слиянием\n4. Сортировка вставками\n5. Сортировка Шелла\n6. Сортировка выбором\n\nEnter. Задать массив из рандомных чисел (при массиве из менее чем 20 элементов будут выведены этапы сортировки иначе будет замерена скорость выполнения)\nEsc. Выход";
 }
 
 void Sorts() {
     cout << "Массив: ";
     if (Array.size() == 0) cout << "Пусто";
     else PrintArray(Array);
-    cout << "\nНажмите на нужную цифру для управления:\n1. Быстрая сортировка\n2. Сортировка пузырьком\n3. Сортировка слиянием\n4. Сортировка вставками\n5. Сортировка Шелла\n6. Сортировка выбором\n\nEnter. Задать массив из рандомных чисел\nEsc. Выход";
+    cout << "\nНажмите на нужную цифру для управления:\n1. Быстрая сортировка\n2. Сортировка пузырьком\n3. Сортировка слиянием\n4. Сортировка вставками\n5. Сортировка Шелла\n6. Сортировка выбором\n\nEnter. Задать массив из рандомных чисел (при массиве из менее чем 20 элементов будут выведены этапы сортировки иначе будет замерена скорость выполнения)\nEsc. Выход";
     bool running = true;
     char choice;
     double time = 0;
+    bool visual;
     while (running) {
         choice = _getch();
         switch (choice) {
         case '1': {
             system("cls");
             if (Array.size() >= 20) {
+                visual = false;
                 auto start = chrono::high_resolution_clock::now();
-                QuickSort(Array, 0, Array.size() - 1);
+                QuickSort(Array, 0, Array.size() - 1, visual);
                 auto end = chrono::high_resolution_clock::now();
                 auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
                 SortMenu(Array);
                 cout << "\n\nВремя выполнения быстрой сортировки: " << duration.count() / 1e6 << " мс" << endl;
             }
             else {
-                QuickSort(Array, 0, Array.size() - 1);
+                visual = true;
+                cout << "Этапы выполнения сортировки:\n";
+                QuickSort(Array, 0, Array.size() - 1, visual);
+                cout << "\nНажмите любую кнопку для продолжения";
+                _getch();
                 SortMenu(Array);
             }
             break;
@@ -172,15 +196,20 @@ void Sorts() {
         case '2': {
             system("cls");
             if (Array.size() >= 20) {
+                visual = false;
                 auto start = chrono::high_resolution_clock::now();
-                BubbleSort(Array);
+                BubbleSort(Array, visual);
                 auto end = chrono::high_resolution_clock::now();
                 auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
                 SortMenu(Array);
                 cout << "\n\nВремя выполнения сортировки пузырьком: " << time << " мс" << endl;
             }
             else {
-                BubbleSort(Array);
+                visual = true;
+                cout << "Этапы выполнения сортировки:\n";
+                BubbleSort(Array, visual);
+                cout << "\nНажмите любую кнопку для продолжения";
+                _getch();
                 SortMenu(Array);
             }
             break;
@@ -188,15 +217,20 @@ void Sorts() {
         case '3': {
             system("cls");
             if (Array.size() >= 20) {
+                visual = false;
                 auto start = chrono::high_resolution_clock::now();
-                MergeSort(Array, 0, Array.size() - 1);
+                MergeSort(Array, 0, Array.size() - 1, visual);
                 auto end = chrono::high_resolution_clock::now();
                 auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
                 SortMenu(Array);
                 cout << "\n\nВремя выполнения сортировки слиянием: " << duration.count() / 1e6 << " мс" << endl;
             }
             else {
-                MergeSort(Array, 0, Array.size() - 1);
+                visual = true;
+                cout << "Этапы выполнения сортировки:\n";
+                MergeSort(Array, 0, Array.size() - 1, visual);
+                cout << "\nНажмите любую кнопку для продолжения";
+                _getch();
                 SortMenu(Array);
             }
             break;
@@ -204,15 +238,20 @@ void Sorts() {
         case '4': {
             system("cls");
             if (Array.size() >= 20) {
+                visual = false;
                 auto start = chrono::high_resolution_clock::now();
-                InsertionSort(Array);
+                InsertionSort(Array, visual);
                 auto end = chrono::high_resolution_clock::now();
                 auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
                 SortMenu(Array);
                 cout << "\n\nВремя выполнения сортировки вставками: " << time << " мс" << endl;
             }
             else {
-                InsertionSort(Array);
+                visual = true;
+                cout << "Этапы выполнения сортировки:\n";
+                InsertionSort(Array, visual);
+                cout << "\nНажмите любую кнопку для продолжения";
+                _getch();
                 SortMenu(Array);
             }
             break;
@@ -220,15 +259,20 @@ void Sorts() {
         case '5': {
             system("cls");
             if (Array.size() >= 20) {
+                visual = false;
                 auto start = chrono::high_resolution_clock::now();
-                ShellSort(Array);
+                ShellSort(Array, visual);
                 auto end = chrono::high_resolution_clock::now();
                 auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
                 SortMenu(Array);
                 cout << "\n\nВремя выполнения сортировки Шелла: " << time << " мс" << endl;
             }
             else {
-                ShellSort(Array);
+                visual = true;
+                cout << "Этапы выполнения сортировки:\n";
+                ShellSort(Array, visual);
+                cout << "\nНажмите любую кнопку для продолжения";
+                _getch();
                 SortMenu(Array);
             }
             break;
@@ -236,15 +280,20 @@ void Sorts() {
         case '6': {
             system("cls");
             if (Array.size() >= 20) {
+                visual = false;
                 auto start = chrono::high_resolution_clock::now();
-                SelectionSort(Array);
+                SelectionSort(Array, visual);
                 auto end = chrono::high_resolution_clock::now();
                 auto duration = chrono::duration_cast<chrono::nanoseconds>(end - start);
                 SortMenu(Array);
                 cout << "\n\nВремя выполнения сортировки выбором: " << time << " мс" << endl;
             }
             else {
-                SelectionSort(Array);
+                visual = true;
+                cout << "Этапы выполнения сортировки:\n";
+                SelectionSort(Array, visual);
+                cout << "\nНажмите любую кнопку для продолжения";
+                _getch();
                 SortMenu(Array);
             }
             break;
