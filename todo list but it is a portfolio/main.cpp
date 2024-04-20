@@ -275,7 +275,7 @@ int main() {
                     DateFinder();
                 }
                 else if (currOpt == 24) {
-                    Sorts();  // TODO: Визуализация 
+                    Sorts();
                 }
                 MenuDraw(todos, currOpt, numbOfOpt);
                 break;

@@ -186,6 +186,7 @@ void Sorts() {
             else {
                 visual = true;
                 cout << "Этапы выполнения сортировки:\n";
+                PrintArray(Array);
                 QuickSort(Array, 0, Array.size() - 1, visual);
                 cout << "\nНажмите любую кнопку для продолжения";
                 _getch();
@@ -207,6 +208,7 @@ void Sorts() {
             else {
                 visual = true;
                 cout << "Этапы выполнения сортировки:\n";
+                PrintArray(Array);
                 BubbleSort(Array, visual);
                 cout << "\nНажмите любую кнопку для продолжения";
                 _getch();
@@ -228,6 +230,7 @@ void Sorts() {
             else {
                 visual = true;
                 cout << "Этапы выполнения сортировки:\n";
+                PrintArray(Array);
                 MergeSort(Array, 0, Array.size() - 1, visual);
                 cout << "\nНажмите любую кнопку для продолжения";
                 _getch();
@@ -249,6 +252,7 @@ void Sorts() {
             else {
                 visual = true;
                 cout << "Этапы выполнения сортировки:\n";
+                PrintArray(Array);
                 InsertionSort(Array, visual);
                 cout << "\nНажмите любую кнопку для продолжения";
                 _getch();
@@ -270,6 +274,7 @@ void Sorts() {
             else {
                 visual = true;
                 cout << "Этапы выполнения сортировки:\n";
+                PrintArray(Array);
                 ShellSort(Array, visual);
                 cout << "\nНажмите любую кнопку для продолжения";
                 _getch();
@@ -291,6 +296,7 @@ void Sorts() {
             else {
                 visual = true;
                 cout << "Этапы выполнения сортировки:\n";
+                PrintArray(Array);
                 SelectionSort(Array, visual);
                 cout << "\nНажмите любую кнопку для продолжения";
                 _getch();
