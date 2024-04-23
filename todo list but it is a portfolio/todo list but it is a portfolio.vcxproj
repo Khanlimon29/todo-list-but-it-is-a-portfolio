@@ -132,6 +132,7 @@
       <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Default</LanguageStandard>
     </ClCompile>
     <ClCompile Include="Converter.cpp" />
+    <ClCompile Include="CsvPars.cpp" />
     <ClCompile Include="Date.cpp">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
@@ -156,6 +157,7 @@
     <ClInclude Include="Ascii_Finder.h" />
     <ClInclude Include="Calc.h" />
     <ClInclude Include="Converter.h" />
+    <ClInclude Include="CsvPars.h" />
     <ClInclude Include="Date.h" />
     <ClInclude Include="gotoxy.h" />
     <ClInclude Include="MultTable.h" />

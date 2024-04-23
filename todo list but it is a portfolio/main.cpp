@@ -22,6 +22,7 @@
 #include "Sorts.h"
 #include "Date.h"
 #include "Converter.h"
+#include "CsvPars.h"
 
 using namespace std;
 // Структура для хранения задач
@@ -273,6 +274,9 @@ int main() {
                 }
                 else if (currOpt == 19) { 
                     DateFinder();
+                }
+                else if (currOpt == 20) {
+                    CsvParser();        // TODO: дополнительный вывод таблицы
                 }
                 else if (currOpt == 24) {
                     Sorts();
