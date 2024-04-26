@@ -21,10 +21,10 @@ vector<string> split(const string line, char delimiter) {
 void CsvParser() {
     char delimiter;
     string filename;
-
+    string File_Dir_Parc = "Parc_files/";
     cout << "Введите имя файла: ";
     cin >> filename;
-    filename = filename + ".csv";
+    filename = File_Dir_Parc + filename + ".csv";
     ifstream file(filename);
 
     if (!file.is_open()) {

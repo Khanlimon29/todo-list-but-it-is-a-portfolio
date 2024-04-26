@@ -188,7 +188,8 @@ void EditTask(string& task) {
 
 int main() {
     system("mode 650");
-    string filename = "Todo.txt";
+    string List_Dir = "Lists/";
+    string filename = List_Dir + "Todo.txt";
     int currOpt = 0;
     char key;
     bool running = true;
