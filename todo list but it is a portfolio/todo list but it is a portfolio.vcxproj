@@ -152,6 +152,9 @@
     <ClCompile Include="Sorts.cpp" />
     <ClCompile Include="StackSim.cpp" />
     <ClCompile Include="tic_tac_toe.cpp" />
+    <ClCompile Include="WeekOfEducation.cpp">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ascii_Finder.h" />
@@ -171,6 +174,7 @@
     <ClInclude Include="Sorts.h" />
     <ClInclude Include="StackSim.h" />
     <ClInclude Include="tic_tac_toe.h" />
+    <ClInclude Include="WeekOfEducation.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -23,6 +23,7 @@
 #include "Date.h"
 #include "Converter.h"
 #include "CsvPars.h"
+#include "WeekOfEducation.h"
 
 using namespace std;
 // Структура для хранения задач
@@ -274,13 +275,16 @@ int main() {
                     Converter();
                 }
                 else if (currOpt == 19) { 
-                    DateFinder();
+                    DateFinder();       // TODO: дополнительный вывод в днях
                 }
                 else if (currOpt == 20) {
                     CsvParser();        // TODO: дополнительный вывод таблицы
                 }
                 else if (currOpt == 24) {
                     Sorts();
+                }
+                else if (currOpt == 29) {
+                    WeekOfEducation();  // TODO: учитывание дня недели начала семестра
                 }
                 MenuDraw(todos, currOpt, numbOfOpt);
                 break;
