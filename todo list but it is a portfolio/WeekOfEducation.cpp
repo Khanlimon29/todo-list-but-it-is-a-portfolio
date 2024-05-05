@@ -15,7 +15,6 @@ int WeekCalculation() {
     time_t start_semester_time;
     time_t end_semester_time;
 
-
     if (ltm->tm_mon < 8) {
         start_of_semester = { 0, 0, 0, 9, 1, ltm->tm_year }; // 9 февраля
         end_of_semester = { 0, 0, 0, 1, 5, ltm->tm_year };   // 1 июня
@@ -24,18 +23,16 @@ int WeekCalculation() {
         start_of_semester = { 0, 0, 0, 1, 8, ltm->tm_year };  // 1 сентября
         end_of_semester = { 0, 0, 0, 30, 11, ltm->tm_year }; // 30 декабря
     }
-    
+
     start_semester_time = mktime(&start_of_semester);
     end_semester_time = mktime(&end_of_semester);
-    
-    tm TestDate;
-    time_t TestDateTime;
-    TestDate = { 0, 0, 0, 30, 2, ltm->tm_year};
-    TestDateTime = mktime(&TestDate);
-    
-    double seconds_diff = difftime(now, start_semester_time);
 
-    int academic_week = 2 + (seconds_diff / (7 * 24 * 60 * 60));
+    int offset = start_of_semester.tm_wday - 1;
+    double offset_diff = offset * 24 * 60 * 60;
+
+    double seconds_diff = difftime(now, start_semester_time) + offset_diff;
+
+    int academic_week = 1 + (seconds_diff / (7 * 24 * 60 * 60));
 
     return academic_week;
 }

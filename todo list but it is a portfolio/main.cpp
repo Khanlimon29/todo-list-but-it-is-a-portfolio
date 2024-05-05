@@ -242,7 +242,7 @@ int main() {
                     ASCIIfinder();
                 }
                 else if (currOpt == 2) {
-                    Calculator();
+                    Calculator();    // TODO: Переделать ошибки
                 }
                 else if (currOpt == 3) {
                     tic_tac();
@@ -284,7 +284,7 @@ int main() {
                     Sorts();
                 }
                 else if (currOpt == 29) {
-                    WeekOfEducation();  // TODO: учитывание дня недели начала семестра
+                    WeekOfEducation();
                 }
                 MenuDraw(todos, currOpt, numbOfOpt);
                 break;
