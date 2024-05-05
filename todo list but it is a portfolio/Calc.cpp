@@ -2,7 +2,7 @@
 #include <iostream>
 #include <stack>
 #include <string>
-#include <conio.h> 
+#include <conio.h>
 #include "setcolor.h"
 #include <iomanip>
 
@@ -34,15 +34,21 @@ long double ApplyOperation(long double Operand1, long double Operand2, char Op, 
 long double EvaluateExpression(const string& Expression, bool& error) {
     stack<long double> Values;
     stack<char> Operators;
+    bool negative = false;
 
     for (size_t i = 0; i < Expression.length(); ++i) {
         if (Expression[i] == ' ')
             continue;
 
-        if (isdigit(Expression[i]) || Expression[i] == '.') {
+        if (isdigit(Expression[i]) || Expression[i] == '.' || (Expression[i] == '-' && (i == 0 || Expression[i - 1] == '('))) {
             long double Val = 0;
             long double Fraction = 0.1;
             bool DecimalPointFound = false;
+
+            if (Expression[i] == '-') {
+                negative = true;
+                continue;
+            }
 
             while (i < Expression.length() && (isdigit(Expression[i]) || Expression[i] == '.')) {
                 if (Expression[i] != '.') {
@@ -60,7 +66,8 @@ long double EvaluateExpression(const string& Expression, bool& error) {
                 ++i;
             }
             --i;
-            Values.push(Val);
+            Values.push(negative ? -Val : Val);
+            negative = false;
         }
         else if (Expression[i] == '(') {
             Operators.push(Expression[i]);
@@ -93,7 +100,7 @@ long double EvaluateExpression(const string& Expression, bool& error) {
                 Operators.pop();
 
                 Values.push(ApplyOperation(Operand1, Operand2, Op, error));
-                if (error) return 0; 
+                if (error) return 0;
             }
             Operators.push(Expression[i]);
         }
@@ -110,7 +117,7 @@ long double EvaluateExpression(const string& Expression, bool& error) {
         Operators.pop();
 
         Values.push(ApplyOperation(Operand1, Operand2, Op, error));
-        if (error) return 0; 
+        if (error) return 0;
     }
 
     if (Values.size() != 1) {
@@ -134,6 +141,7 @@ int Calculator() {
     string Expression;
     bool error = false;
 
+    cout << "Отрицательные числа должны быть заключены в скобки (кроме начала выражения)\n";
     cout << "Введите выражение: ";
     getline(cin, Expression);
 
@@ -172,7 +180,7 @@ int Calculator() {
         if (!isdigit(Symbol) && Symbol != '+' && Symbol != '-' && Symbol != '*' && Symbol != '/' && Symbol != '(' && Symbol != ')' && Symbol != '.' && Symbol != ' ') {
             SetColor(31);
             cout << "Некорректные символы в выражении" << endl;
-            SetColor(0); 
+            SetColor(0);
             cout << "\nНажмите на любую кнопку для продолжения";
             _getch();
             return 1;
@@ -188,7 +196,7 @@ int Calculator() {
         return 1;
     }
 
-if (error) {
+    if (error) {
         SetColor(31);
         cout << "Некорректное выражение!" << endl;
         SetColor(0);
