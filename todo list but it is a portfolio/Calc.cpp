@@ -74,14 +74,32 @@ long double EvaluateExpression(const string& Expression, bool& error) {
         }
         else if (Expression[i] == ')') {
             while (!Operators.empty() && Operators.top() != '(') {
-                long double Operand2 = Values.top();
-                Values.pop();
-
-                long double Operand1 = Values.top();
-                Values.pop();
-
-                char Op = Operators.top();
-                Operators.pop();
+                long double Operand2, Operand1;
+                char Op;
+                if (!Values.empty()) {
+                    Operand2 = Values.top();
+                    Values.pop();
+                }
+                else {
+                    error = true;
+                    return 0;
+                }
+                if (!Values.empty()) {
+                    Operand1 = Values.top();
+                    Values.pop();
+                }
+                else {
+                    error = true;
+                    return 0;
+                }
+                if (!Operators.empty()) {
+                    Op = Operators.top();
+                    Operators.pop();
+                }
+                else {
+                    error = true;
+                    return 0;
+                }
 
                 Values.push(ApplyOperation(Operand1, Operand2, Op, error));
                 if (error) return 0;
@@ -90,14 +108,32 @@ long double EvaluateExpression(const string& Expression, bool& error) {
         }
         else {
             while (!Operators.empty() && Priority(Operators.top()) >= Priority(Expression[i])) {
-                long double Operand2 = Values.top();
-                Values.pop();
-
-                long double Operand1 = Values.top();
-                Values.pop();
-
-                char Op = Operators.top();
-                Operators.pop();
+                long double Operand2, Operand1;
+                char Op;
+                if (!Values.empty()) {
+                    Operand2 = Values.top();
+                    Values.pop();
+                }
+                else {
+                    error = true;
+                    return 0;
+                }
+                if (!Values.empty()) {
+                    Operand1 = Values.top();
+                    Values.pop();
+                }
+                else {
+                    error = true;
+                    return 0;
+                }
+                if (!Operators.empty()) {
+                    Op = Operators.top();
+                    Operators.pop();
+                }
+                else {
+                    error = true;
+                    return 0;
+                }
 
                 Values.push(ApplyOperation(Operand1, Operand2, Op, error));
                 if (error) return 0;
@@ -107,14 +143,32 @@ long double EvaluateExpression(const string& Expression, bool& error) {
     }
 
     while (!Operators.empty()) {
-        long double Operand2 = Values.top();
-        Values.pop();
-
-        long double Operand1 = Values.top();
-        Values.pop();
-
-        char Op = Operators.top();
-        Operators.pop();
+        long double Operand2, Operand1;
+        char Op;
+        if (!Values.empty()) {
+            Operand2 = Values.top();
+            Values.pop();
+        }
+        else {
+            error = true;
+            return 0;
+        }
+        if (!Values.empty()) {
+            Operand1 = Values.top();
+            Values.pop();
+        }
+        else {
+            error = true;
+            return 0;
+        }
+        if (!Operators.empty()) {
+            Op = Operators.top();
+            Operators.pop();
+        }
+        else {
+            error = true;
+            return 0;
+        }
 
         Values.push(ApplyOperation(Operand1, Operand2, Op, error));
         if (error) return 0;
@@ -208,7 +262,7 @@ int Calculator() {
         long double result = EvaluateExpression(Expression, error);
         if (error) {
             SetColor(31);
-            cout << "Ошибка деления на ноль!" << endl;
+            cout << "Некорректное выражение!" << endl;
             SetColor(0);
             cout << "\nНажмите на любую кнопку для продолжения";
             _getch();
