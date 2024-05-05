@@ -242,7 +242,7 @@ int main() {
                     ASCIIfinder();
                 }
                 else if (currOpt == 2) {
-                    Calculator();    // TODO: Переделать ошибки
+                    Calculator();    // TODO: поддержка отрицательных чисел
                 }
                 else if (currOpt == 3) {
                     tic_tac();

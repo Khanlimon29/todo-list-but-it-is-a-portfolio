@@ -141,6 +141,7 @@ int Calculator() {
         SetColor(31);
         cout << "Пустое выражение!" << endl;
         SetColor(0);
+        cout << "\nНажмите на любую кнопку для продолжения";
         _getch();
         return 1;
     }
@@ -152,6 +153,7 @@ int Calculator() {
         SetColor(31);
         cout << "Незавершенное выражение!" << endl;
         SetColor(0);
+        cout << "\nНажмите на любую кнопку для продолжения";
         _getch();
         return 1;
     }
@@ -171,6 +173,7 @@ int Calculator() {
             SetColor(31);
             cout << "Некорректные символы в выражении" << endl;
             SetColor(0); 
+            cout << "\nНажмите на любую кнопку для продолжения";
             _getch();
             return 1;
         }
@@ -180,19 +183,31 @@ int Calculator() {
         SetColor(31);
         cout << "Незакрытые скобки в выражении!" << endl;
         SetColor(0);
+        cout << "\nНажмите на любую кнопку для продолжения";
         _getch();
         return 1;
     }
 
-    if (error) {
+if (error) {
         SetColor(31);
         cout << "Некорректное выражение!" << endl;
         SetColor(0);
+        cout << "\nНажмите на любую кнопку для продолжения";
+        _getch();
+        return 1;
     }
     else {
         long double result = EvaluateExpression(Expression, error);
+        if (error) {
+            SetColor(31);
+            cout << "Ошибка деления на ноль!" << endl;
+            SetColor(0);
+            cout << "\nНажмите на любую кнопку для продолжения";
+            _getch();
+            return 1;
+        }
         int precision = (result == static_cast<long long>(result)) ? 0 : 6;
-        cout << "Результат: " << fixed << setprecision(precision) << result <<endl;
+        cout << "Результат: " << fixed << setprecision(precision) << result << endl;
     }
 
     cout << "\nНажмите на любую кнопку для продолжения";
