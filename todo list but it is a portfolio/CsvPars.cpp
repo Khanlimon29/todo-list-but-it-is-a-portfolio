@@ -1,10 +1,10 @@
 #include <iostream>
 #include <conio.h>
-#include "CsvPars.h"
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <string>
+#include "gotoxy.h"
 
 using namespace std;
 
@@ -56,15 +56,26 @@ void CsvParser() {
     }
 
     string line;
+    int row = 10;
     while (getline(file, line)) {
         vector<string> tokens = split(line, delimiter);
+        int column = 0;
         for (const auto& token : tokens) {
-            cout << token << " ";
+            gotoxy(column * 30, row);
+            cout << "|" << token << "\t";
+            column++;
         }
-        cout << endl;
+        gotoxy(column * 30, row);
+        cout << "|" << endl;
+        gotoxy(0, row + 1);
+        for (int i = 0; i < tokens.size(); ++i) {
+            cout << "+-----------------------------";
+        }
+        cout << "+" << endl;
+        row += 2;
     }
 
     file.close();
-    cout << "\nНажмите на любую кнопку для продолжения";
+    cout << "\n\nНажмите на любую кнопку для продолжения";
     _getch();
 }

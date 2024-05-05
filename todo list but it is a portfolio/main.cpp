@@ -275,10 +275,10 @@ int main() {
                     Converter();
                 }
                 else if (currOpt == 19) { 
-                    DateFinder();       // TODO: дополнительный вывод в днях
+                    DateFinder();
                 }
                 else if (currOpt == 20) {
-                    CsvParser();        // TODO: дополнительный вывод таблицы
+                    CsvParser();        // TODO: ошибка парсинга при разделении пробелом
                 }
                 else if (currOpt == 24) {
                     Sorts();
