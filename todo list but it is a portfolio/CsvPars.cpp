@@ -13,6 +13,11 @@ vector<string> split(const string line, char delimiter) {
     string token;
     istringstream tokenStream(line);
     while (getline(tokenStream, token, delimiter)) {
+        for (char& c : token) {
+            if (c == '_') {
+                c = ' ';
+            }
+        }
         tokens.push_back(token);
     }
     return tokens;

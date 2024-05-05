@@ -278,7 +278,7 @@ int main() {
                     DateFinder();
                 }
                 else if (currOpt == 20) {
-                    CsvParser();        // TODO: ошибка парсинга при разделении пробелом
+                    CsvParser();
                 }
                 else if (currOpt == 24) {
                     Sorts();
