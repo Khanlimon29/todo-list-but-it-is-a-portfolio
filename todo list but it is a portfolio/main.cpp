@@ -24,6 +24,7 @@
 #include "Converter.h"
 #include "CsvPars.h"
 #include "WeekOfEducation.h"
+#include "StringFinder.h"
 
 using namespace std;
 // Структура для хранения задач
@@ -224,10 +225,10 @@ int main() {
             case 13: // Enter
             {
                 system("cls");
-                cout << "Выбранный вариант: " << todos[currOpt].task <<  "\n\n";
+                cout << "Выбранный вариант: " << todos[currOpt].task << "\n\n";
                 if (todos[currOpt].check == 1) {
                     cout << "  ***Work in progress***         ";
-                }               
+                }
                 else if (todos[currOpt].check == 0) {
                     cout << "TODO";
                     _getch();
@@ -273,6 +274,9 @@ int main() {
                 }
                 else if (currOpt == 15) {
                     Converter();
+                }
+                else if (currOpt == 16) {
+                    StringFinder();
                 }
                 else if (currOpt == 19) { 
                     DateFinder();

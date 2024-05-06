@@ -72,6 +72,9 @@
     <ClCompile Include="WeekOfEducation.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="StringFinder.cpp">
+      <Filter>Resource Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ascii_Finder.h">
@@ -126,6 +129,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="WeekOfEducation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StringFinder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
