@@ -7,25 +7,6 @@
 
 using namespace std;
 
-//int searchSubstringFirst(const string& str, const string& substr) {
-//    size_t found = str.find(substr);
-//    if (found != string::npos) {
-//        return found;
-//    }
-//    return -1;
-//}
-//
-//int searchSubstringAll (const string& str, const string& substr, vector<int>& positions) {
-//    size_t found = str.find(substr);
-//    int count = 0;
-//    while (found != string::npos) {
-//        positions.push_back(found);
-//        found = str.find(substr, found + 1);
-//        count++;
-//    }
-//    return count;
-//}
-
 int searchSubstring(const string& str, const string& substr, vector<int>& positions, bool first) {
     size_t found = str.find(substr);
     if (found != string::npos) {
