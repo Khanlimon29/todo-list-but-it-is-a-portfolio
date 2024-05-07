@@ -57,8 +57,18 @@ void StringFinder() {
                 vector<int> positions;
                 while (getline(file, line)) {
                     int count = searchSubstring(line, substr, positions, first);
+                    if (count > 0) {
+                        if (!first) cout << "Подстрока найдена " << count << " раз(а) в словах с номерами ";
+                        else cout << "Подстрока найдена в слове с номером ";
                         for (int i = 0; i < count; ++i) {
-                        cout << "Подстрока найдена в строке " << line_number << ", позиция: " << positions[i] << endl;
+                            cout << positions[i];
+                            if (i < count - 1) cout << ", ";
+                            else cout << " ";
+                        }
+                        cout << endl;
+                    }
+                    else {
+                        cout << "Подстрока не найдена\n";
                     }
                 }
                 file.close();
@@ -66,6 +76,7 @@ void StringFinder() {
             else {
                 cout << "Невозможно открыть файл\n";
             }
+            cout << "\nДля продолжения нажмите на любую клавишу";
             _getch();
             DrawStringMenu(first);
             break;
@@ -82,7 +93,7 @@ void StringFinder() {
             vector<int> positions;
             int count = searchSubstring(str, substr, positions, first);
             if (count > 0) {
-                if (!first) cout << "Подстрока найдена " << count << " раз(а), в словах с номерами ";
+                if (!first) cout << "Подстрока найдена " << count << " раз(а) в словах с номерами ";
                 else cout << "Подстрока найдена в слове с номером ";
                 for (int i = 0; i < count; ++i) {
                     cout << positions[i];
@@ -94,6 +105,7 @@ void StringFinder() {
             else {
                 cout << "Подстрока не найдена\n";
             }
+            cout << "\nДля продолжения нажмите на любую клавишу";
             _getch();
             DrawStringMenu(first);
             break;
