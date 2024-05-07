@@ -4,35 +4,31 @@
 #include <fstream>
 #include <string>
 #include <vector>
+ #include <sstream>
 
 using namespace std;
 
 int searchSubstring(const string& str, const string& substr, vector<int>& positions, bool first) {
-    size_t found = str.find(substr);
-    if (found != string::npos) {
-        positions.push_back(found);
-        if (first)
-            return 1;
-        else {
-            int count = 1;
-            while (found != string::npos) {
-                found = str.find(substr, found + 1);
-                if (found != string::npos) {
-                    positions.push_back(found);
-                    count++;
-                }
-            }
-            return count;
+    stringstream ss(str);
+    string word;
+    int word_number = 1; 
+    int count = 0;
+    while (ss >> word) {
+        size_t found = word.find(substr);
+        if (found != string::npos) {
+            positions.push_back(word_number);
+            count++;
+            if (first) return 1;
         }
+        word_number++;
     }
-    return 0;
+    return count;
 }
-
 
 void DrawStringMenu(bool first) {
     system("cls");
     cout << "Выбранный вариант: Поиск подстроки: Программа для поиска подстроки в строке и вывода позиции ее первого вхождения\n\n";
-    cout << "Текущий режим работы:";
+    cout << "Текущий режим работы: ";
     if (first) cout << "Поиск первого вхождения";
     else cout << "Поиск всех вхождений";
     cout << "\n1. Поиск внутри файла\n2. Поиск внутри строки введённой вручную\nEnter. Смена режима работы (Поиск первого вхождения / Поиск всех вхождений)\n\nEsc. Выход";
@@ -61,10 +57,9 @@ void StringFinder() {
                 vector<int> positions;
                 while (getline(file, line)) {
                     int count = searchSubstring(line, substr, positions, first);
-                    for (int i = 0; i < count; ++i) {
+                        for (int i = 0; i < count; ++i) {
                         cout << "Подстрока найдена в строке " << line_number << ", позиция: " << positions[i] << endl;
                     }
-                    line_number++;
                 }
                 file.close();
             }
@@ -87,10 +82,12 @@ void StringFinder() {
             vector<int> positions;
             int count = searchSubstring(str, substr, positions, first);
             if (count > 0) {
-                cout << "Подстрока найдена " << count << " раз(а) в позициях: ";
+                if (!first) cout << "Подстрока найдена " << count << " раз(а), в словах с номерами ";
+                else cout << "Подстрока найдена в слове с номером ";
                 for (int i = 0; i < count; ++i) {
                     cout << positions[i];
                     if (i < count - 1) cout << ", ";
+                    else cout << " ";
                 }
                 cout << endl;
             }
