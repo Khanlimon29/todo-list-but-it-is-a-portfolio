@@ -79,7 +79,7 @@ void Saver() {
 	DrawScreen();
 	DrawLogo(LogoX1, LogoY1);
 	gotoxy(0, 34);
-	cout << "Количество ударов об угол: 0";
+	cout << "Количество ударов об угол: " << hits;
 	_getch();
 
 	while (true) {
