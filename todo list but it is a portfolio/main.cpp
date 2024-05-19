@@ -288,7 +288,7 @@ int main() {
                     Sorts();
                 }
                 else if (currOpt == 29) {
-                    WeekOfEducation();
+                    WeekOfEducation();  // TODO: оптимизация надо очень
                 }
                 MenuDraw(todos, currOpt, numbOfOpt);
                 break;
