@@ -235,60 +235,80 @@ int main() {
                     MenuDraw(todos, currOpt, numbOfOpt);
                     break;
                 }
-                if (currOpt == 0) {
+                switch (currOpt) {
+                case 0: {
                     cout << "Вся программа является списком задач";
                     _getch();
+                    break;
                 }
-                else if (currOpt == 1) {
+                case 1: {
                     ASCIIfinder();
+                    break;
                 }
-                else if (currOpt == 2) {
+                case 2: {
                     Calculator();
+                    break;
                 }
-                else if (currOpt == 3) {
+                case 3: {
                     tic_tac();
+                    break;
                 }
-                else if (currOpt == 4) {
+                case 4: {
                     RandomNumber();
+                    break;
                 }
-                else if (currOpt == 5) {
+                case 5: {
                     Generator();
+                    break;
                 }
-                else if (currOpt == 7) {
+                case 7: {
                     RandomNumberGame();
+                    break;
                 }
-                else if (currOpt == 8) {
+                case 8: {
                     Saver();
+                    break;
                 }
-                else if (currOpt == 9) {
+                case 9: {
                     StackSimulator();
+                    break;
                 }
-                else if (currOpt == 10) {
+                case 10: {
                     QueueSimulator();
+                    break;
                 }
-                else if (currOpt == 12) {
+                case 12: {
                     TableTrainer();
+                    break;
                 }
-                else if (currOpt == 14) {
+                case 14: {
                     Finder();
+                    break;
                 }
-                else if (currOpt == 15) {
+                case 15: {
                     Converter();
+                    break;
                 }
-                else if (currOpt == 16) {
+                case 16: {
                     StringFinder();
+                    break;
                 }
-                else if (currOpt == 19) { 
+                case 19: {
                     DateFinder();
+                    break;
                 }
-                else if (currOpt == 20) {
+                case 20: {
                     CsvParser();
+                    break;
                 }
-                else if (currOpt == 24) {
+                case 24: {
                     Sorts();
+                    break;
                 }
-                else if (currOpt == 29) {
+                case 29: {
                     WeekOfEducation();  // TODO: оптимизация надо очень
+                    break;
+                }
                 }
                 MenuDraw(todos, currOpt, numbOfOpt);
                 break;
