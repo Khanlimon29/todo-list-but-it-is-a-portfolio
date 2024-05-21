@@ -8,78 +8,76 @@
 
 using namespace std;
 
+tm GetSemesterStart(bool isSpring) {
+    tm start_of_semester;
+    if (isSpring) {
+        start_of_semester = { 0, 0, 0, 9, 1, 0 }; // 9 февраля
+    }
+    else {
+        start_of_semester = { 0, 0, 0, 1, 8, 0 }; // 1 сентября
+    }
+    return start_of_semester;
+}
+
+tm GetSemesterEnd(bool isSpring) {
+    tm end_of_semester;
+    if (isSpring) {
+        end_of_semester = { 0, 0, 0, 1, 5, 0 }; // 1 июня
+    }
+    else {
+        end_of_semester = { 0, 0, 0, 30, 11, 0 }; // 30 декабря
+    }
+    return end_of_semester;
+}
+
+time_t GetTimeFromTm(tm& date, int year) {
+    date.tm_year = year - 1900;
+    return mktime(&date);
+}
+
+bool IsSpringSemester(tm* ltm) {
+    return ltm->tm_mon < 8;
+}
+
 int WeekCalculation() {
     time_t now = time(0);
     tm* ltm = localtime(&now);
-    tm start_of_semester;
-    tm end_of_semester;
+    bool isSpring = IsSpringSemester(ltm);
 
-    time_t start_semester_time;
-    time_t end_semester_time;
-
-    if (ltm->tm_mon < 8) {
-        start_of_semester = { 0, 0, 0, 9, 1, ltm->tm_year }; // 9 февраля
-        end_of_semester = { 0, 0, 0, 1, 5, ltm->tm_year };   // 1 июня
-    }
-    else {
-        start_of_semester = { 0, 0, 0, 1, 8, ltm->tm_year };  // 1 сентября
-        end_of_semester = { 0, 0, 0, 30, 11, ltm->tm_year }; // 30 декабря
-    }
-
-    start_semester_time = mktime(&start_of_semester);
-    end_semester_time = mktime(&end_of_semester);
+    tm start_of_semester = GetSemesterStart(isSpring);
+    time_t start_semester_time = GetTimeFromTm(start_of_semester, ltm->tm_year + 1900);
 
     int offset = start_of_semester.tm_wday - 1;
     double offset_diff = offset * 24 * 60 * 60;
-
     double seconds_diff = difftime(now, start_semester_time) + offset_diff;
 
-    int academic_week = 1 + (seconds_diff / (7 * 24 * 60 * 60));
-
-    return academic_week;
+    return 1 + (seconds_diff / (7 * 24 * 60 * 60));
 }
 
 int DaysUntilEndOfSemester() {
     time_t now = time(0);
     tm* ltm = localtime(&now);
-    tm end_of_semester;
+    bool isSpring = IsSpringSemester(ltm);
 
-    if (ltm->tm_mon < 8) {
-        end_of_semester = { 0, 0, 0, 1, 5, ltm->tm_year };   // 1 июня
-    }
-    else {
-        end_of_semester = { 0, 0, 0, 30, 11, ltm->tm_year }; // 30 декабря
-    }
-
-    time_t end_semester_time = mktime(&end_of_semester);
+    tm end_of_semester = GetSemesterEnd(isSpring);
+    time_t end_semester_time = GetTimeFromTm(end_of_semester, ltm->tm_year + 1900);
     double seconds_diff = difftime(end_semester_time, now);
 
-    int DaysTillEnd = 2 + seconds_diff / (24 * 60 * 60);
-
-    return DaysTillEnd;
+    return 2 + seconds_diff / (24 * 60 * 60);
 }
 
 int TotalDaysInSemester() {
     time_t now = time(0);
     tm* ltm = localtime(&now);
-    tm start_of_semester;
-    tm end_of_semester;
+    bool isSpring = IsSpringSemester(ltm);
 
-    if (ltm->tm_mon < 8) {
-        start_of_semester = { 0, 0, 0, 9, 1, ltm->tm_year }; // 9 февраля
-        end_of_semester = { 0, 0, 0, 1, 5, ltm->tm_year };   // 1 июня
-    }
-    else {
-        start_of_semester = { 0, 0, 0, 1, 8, ltm->tm_year };  // 1 сентября
-        end_of_semester = { 0, 0, 0, 30, 11, ltm->tm_year }; // 30 декабря
-    }
+    tm start_of_semester = GetSemesterStart(isSpring);
+    tm end_of_semester = GetSemesterEnd(isSpring);
 
-    time_t start_semester_time = mktime(&start_of_semester);
-    time_t end_semester_time = mktime(&end_of_semester);
+    time_t start_semester_time = GetTimeFromTm(start_of_semester, ltm->tm_year + 1900);
+    time_t end_semester_time = GetTimeFromTm(end_of_semester, ltm->tm_year + 1900);
 
-    int total_days = difftime(end_semester_time, start_semester_time) / (24 * 60 * 60) + 1;
-
-    return total_days;
+    return difftime(end_semester_time, start_semester_time) / (24 * 60 * 60) + 1;
 }
 
 void Percentage() {
@@ -116,11 +114,10 @@ void WeekOfEducation() {
     int TillEnd = DaysUntilEndOfSemester();
 
     Percentage();
-    cout << "Текущая дата: " << setfill('0') << setw(2) << ltm->tm_mday << "." << setw(2) << 1 + ltm->tm_mon << "." << setw(2) << 1900 + ltm->tm_year;
+    cout << "Текущая дата: " << setfill('0') << setw(2) << ltm->tm_mday << "." << setw(2) << 1 + ltm->tm_mon << "." << setw(4) << 1900 + ltm->tm_year;
     cout << "\nНомер учебной недели: " << setfill('0') << setw(2) << academic_week;
-    cout << "\nДо конца семестра осталось ";
+    cout << "\nДо конца семестра осталось " << TillEnd << " ";
     if (TillEnd > 0) {
-        cout << TillEnd << " ";
         if (TillEnd == 1 || (TillEnd > 20 && TillEnd % 10 == 1)) {
             cout << "день ";
         }
@@ -131,6 +128,5 @@ void WeekOfEducation() {
             cout << "дней ";
         }
     }
-
     _getch();
 }

@@ -306,7 +306,7 @@ int main() {
                     break;
                 }
                 case 29: {
-                    WeekOfEducation();  // TODO: оптимизация надо очень
+                    WeekOfEducation();
                     break;
                 }
                 }
