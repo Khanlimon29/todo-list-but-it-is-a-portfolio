@@ -191,7 +191,7 @@ bool IsOnlySpaces(const string& str) {
     return true;
 }
 
-int Calculator() {
+void Calculator() {
     string Expression;
     bool error = false;
 
@@ -205,7 +205,7 @@ int Calculator() {
         SetColor(0);
         cout << "\nНажмите на любую кнопку для продолжения";
         _getch();
-        return 1;
+        return;
     }
 
     while (!Expression.empty() && Expression.back() == ' ')
@@ -217,7 +217,7 @@ int Calculator() {
         SetColor(0);
         cout << "\nНажмите на любую кнопку для продолжения";
         _getch();
-        return 1;
+        return;
     }
 
     int OpenBrackets = 0;
@@ -237,7 +237,7 @@ int Calculator() {
             SetColor(0);
             cout << "\nНажмите на любую кнопку для продолжения";
             _getch();
-            return 1;
+            return;
         }
     }
 
@@ -247,7 +247,7 @@ int Calculator() {
         SetColor(0);
         cout << "\nНажмите на любую кнопку для продолжения";
         _getch();
-        return 1;
+        return;
     }
 
     if (error) {
@@ -256,7 +256,7 @@ int Calculator() {
         SetColor(0);
         cout << "\nНажмите на любую кнопку для продолжения";
         _getch();
-        return 1;
+        return;
     }
     else {
         long double result = EvaluateExpression(Expression, error);
@@ -266,7 +266,7 @@ int Calculator() {
             SetColor(0);
             cout << "\nНажмите на любую кнопку для продолжения";
             _getch();
-            return 1;
+            return;
         }
         int precision = (result == static_cast<long long>(result)) ? 0 : 6;
         cout << "Результат: " << fixed << setprecision(precision) << result << endl;
@@ -274,5 +274,5 @@ int Calculator() {
 
     cout << "\nНажмите на любую кнопку для продолжения";
     _getch();
-    return 0;
+    return;
 }

@@ -32,7 +32,7 @@ bool WinCheck(string game[3][3]) {
     return false;
 }
 
-int tic_tac() {
+void tic_tac() {
     string game[3][3];
     int numbOfOptX = 12;
     int numbOfOptY = 6;
@@ -127,5 +127,5 @@ int tic_tac() {
 
     }
     _getch();
-    return 0;
+    return;
 }
