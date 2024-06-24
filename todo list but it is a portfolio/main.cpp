@@ -49,16 +49,16 @@ public:
             if (_kbhit()) {
                 key = _getch();
                 switch (key) {
-                    case 72: MoveUp(); break; // Up            
-                    case 80: MoveDown(); break; // Down
-                    case 13: TaskSelection(); break; // Enter
-                    case 27: ExitProgram(); break; // ESC
-                    case 83: TaskDelete(); break; // Delete
-                    case 110: TaskAdd(); break; // N
+                    case 72: MoveUp(); break;            // Up            
+                    case 80: MoveDown(); break;          // Down
+                    case 13: TaskSelection(); break;     // Enter
+                    case 83: TaskDelete(); break;        // Delete
+                    case 110: TaskAdd(); break;          // N
                     case 101: TaskStatusToggle(); break; // E
-                    case 115: TaskSave(); break; // S
-                    case 109: TaskEditCurr(); break; // M
-                    case 122: UndoLastChange(); break; // Z
+                    case 115: TaskSave(); break;         // S
+                    case 109: TaskEditCurr(); break;     // M
+                    case 122: UndoLastChange(); break;   // Z
+                    case 27: ExitProgram(); break;       // ESC
                 }                
             }
         }
