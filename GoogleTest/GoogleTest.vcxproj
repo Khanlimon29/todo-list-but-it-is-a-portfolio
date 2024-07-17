@@ -21,7 +21,9 @@
   <ItemGroup>
     <ClCompile Include="..\googletest-1.14.0\googletest\src\gtest-all.cc" />
     <ClCompile Include="..\googletest-1.14.0\googletest\src\gtest_main.cc" />
-    <ClCompile Include="Tester.cpp" />
+    <ClCompile Include="Tester.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\todo list but it is a portfolio\todo list but it is a portfolio.vcxproj">
