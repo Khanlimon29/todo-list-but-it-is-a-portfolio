@@ -18,11 +18,21 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\googletest-1.14.0\googletest\src\gtest-all.cc" />
+    <ClCompile Include="..\googletest-1.14.0\googletest\src\gtest_main.cc" />
+    <ClCompile Include="Tester.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\todo list but it is a portfolio\todo list but it is a portfolio.vcxproj">
+      <Project>{64912a1c-d9e1-4583-a572-d2d9347a4174}</Project>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{64912a1c-d9e1-4583-a572-d2d9347a4174}</ProjectGuid>
-    <RootNamespace>todolistbutitisaportfolio</RootNamespace>
+    <ProjectGuid>{6c46f2b7-6326-40de-a34e-27b225879fa2}</ProjectGuid>
+    <RootNamespace>GoogleTest</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -71,7 +81,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(IncludePath)</IncludePath>
+    <IncludePath>D:\source\repos\todo list but it is a portfolio\googletest-1.14.0\googletest\include;D:\source\repos\todo list but it is a portfolio\googletest-1.14.0\googletest;D:\source\repos\todo list but it is a portfolio\todo list but it is a portfolio;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -129,61 +139,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="Ascii_Finder.cpp" />
-    <ClCompile Include="Calc.cpp">
-      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Default</LanguageStandard>
-    </ClCompile>
-    <ClCompile Include="Converter.cpp" />
-    <ClCompile Include="CsvPars.cpp" />
-    <ClCompile Include="Date.cpp">
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <ClCompile Include="gotoxy.cpp" />
-    <ClCompile Include="main.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp17</LanguageStandard>
-    </ClCompile>
-    <ClCompile Include="MultTable.cpp" />
-    <ClCompile Include="PasswordGen.cpp" />
-    <ClCompile Include="PrimeNumb.cpp" />
-    <ClCompile Include="QueueSim.cpp" />
-    <ClCompile Include="RandNumb.cpp" />
-    <ClCompile Include="RandomNumberGame.cpp" />
-    <ClCompile Include="ScreenSaver.cpp" />
-    <ClCompile Include="setcolor.cpp" />
-    <ClCompile Include="Sorts.cpp" />
-    <ClCompile Include="StackSim.cpp" />
-    <ClCompile Include="StringFinder.cpp" />
-    <ClCompile Include="tic_tac_toe.cpp" />
-    <ClCompile Include="WeekOfEducation.cpp">
-      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <LanguageStandard Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdcpp17</LanguageStandard>
-      <LanguageStandard_C Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">stdc17</LanguageStandard_C>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="Ascii_Finder.h" />
-    <ClInclude Include="Calc.h" />
-    <ClInclude Include="Converter.h" />
-    <ClInclude Include="CsvPars.h" />
-    <ClInclude Include="Date.h" />
-    <ClInclude Include="gotoxy.h" />
-    <ClInclude Include="MultTable.h" />
-    <ClInclude Include="PasswordGen.h" />
-    <ClInclude Include="PrimeNumb.h" />
-    <ClInclude Include="QueueSim.h" />
-    <ClInclude Include="RandNumb.h" />
-    <ClInclude Include="RandomNumberGame.h" />
-    <ClInclude Include="ScreenSaver.h" />
-    <ClInclude Include="setcolor.h" />
-    <ClInclude Include="Sorts.h" />
-    <ClInclude Include="StackSim.h" />
-    <ClInclude Include="StringFinder.h" />
-    <ClInclude Include="TestFunc.h" />
-    <ClInclude Include="tic_tac_toe.h" />
-    <ClInclude Include="WeekOfEducation.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

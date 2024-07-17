@@ -134,5 +134,8 @@
     <ClInclude Include="StringFinder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="TestFunc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
