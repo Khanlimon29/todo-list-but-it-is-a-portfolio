@@ -123,7 +123,7 @@ private:
         switch (currOpt) {
             case 0: cout << "Вся программа является списком задач"; _getch(); break;
             case 1: ASCIIfinder(); break;
-            case 2: Calculator(); break;
+            case 2: Calc(); break;
             case 3: tic_tac(); break;
             case 4: RandomNumber(); break;
             case 5: Generator(); break;
@@ -310,11 +310,11 @@ private:
     }
 };
 
-int main() {
-    system("mode 650");
-    string List_Dir = "Lists/";
-    string filename = List_Dir + "Todo.txt";
-    TodoManager manager(filename);
-    manager.Run();
-    return 0;
-}
+//int main() {
+//    system("mode 650");
+//    string List_Dir = "Lists/";
+//    string filename = List_Dir + "Todo.txt";
+//    TodoManager manager(filename);
+//    manager.Run();
+//    return 0;
+//}

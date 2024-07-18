@@ -5,6 +5,7 @@
 #include <conio.h>
 #include "setcolor.h"
 #include <iomanip>
+#include "gtest/gtest.h"
 
 using namespace std;
 
@@ -31,7 +32,7 @@ long double ApplyOperation(long double Operand1, long double Operand2, char Op, 
     }
 }
 
-long double EvaluateExpression(const string& Expression, bool& error) {
+long double EvaluateExpression(string& Expression, bool& error) {
     stack<long double> Values;
     stack<char> Operators;
     bool negative = false;
@@ -191,33 +192,16 @@ bool IsOnlySpaces(const string& str) {
     return true;
 }
 
-void Calculator() {
-    string Expression;
-    bool error = false;
-
-    cout << "Отрицательные числа должны быть заключены в скобки (кроме начала выражения)\n";
-    cout << "Введите выражение: ";
-    getline(cin, Expression);
-
+string Calculator(string Expression, bool error) {
     if (Expression.empty() || IsOnlySpaces(Expression)) {
-        SetColor(31);
-        cout << "Пустое выражение!" << endl;
-        SetColor(0);
-        cout << "\nНажмите на любую кнопку для продолжения";
-        _getch();
-        return;
+        return "err";
     }
 
     while (!Expression.empty() && Expression.back() == ' ')
         Expression.pop_back();
 
     if (!isdigit(Expression.back()) && Expression.back() != ')') {
-        SetColor(31);
-        cout << "Незавершенное выражение!" << endl;
-        SetColor(0);
-        cout << "\nНажмите на любую кнопку для продолжения";
-        _getch();
-        return;
+        return "err";
     }
 
     int OpenBrackets = 0;
@@ -232,47 +216,224 @@ void Calculator() {
         }
 
         if (!isdigit(Symbol) && Symbol != '+' && Symbol != '-' && Symbol != '*' && Symbol != '/' && Symbol != '(' && Symbol != ')' && Symbol != '.' && Symbol != ' ') {
-            SetColor(31);
-            cout << "Некорректные символы в выражении" << endl;
-            SetColor(0);
-            cout << "\nНажмите на любую кнопку для продолжения";
-            _getch();
-            return;
+            return "err";
         }
     }
 
     if (OpenBrackets != ClosedBrackets) {
-        SetColor(31);
-        cout << "Незакрытые скобки в выражении!" << endl;
-        SetColor(0);
-        cout << "\nНажмите на любую кнопку для продолжения";
-        _getch();
-        return;
+        return "err";
     }
 
     if (error) {
-        SetColor(31);
-        cout << "Некорректное выражение!" << endl;
-        SetColor(0);
-        cout << "\nНажмите на любую кнопку для продолжения";
-        _getch();
-        return;
+        return "err";
     }
     else {
         long double result = EvaluateExpression(Expression, error);
         if (error) {
-            SetColor(31);
-            cout << "Некорректное выражение!" << endl;
-            SetColor(0);
-            cout << "\nНажмите на любую кнопку для продолжения";
-            _getch();
-            return;
+            return "err";
         }
         int precision = (result == static_cast<long long>(result)) ? 0 : 6;
-        cout << "Результат: " << fixed << setprecision(precision) << result << endl;
+        stringstream buffer;
+        buffer << fixed << setprecision(precision) << result;
+        string resultStr = buffer.str();                        // war crime zone
+        return resultStr;
     }
+    return "err";
+}
 
+void Calc() {
+    string Expression;
+    bool error = false;
+    cout << "Отрицательные числа должны быть заключены в скобки (кроме начала выражения)\n";
+    cout << "Введите выражение: ";
+    getline(cin, Expression);
+    string result = Calculator(Expression, error);
+    cout << "Результат: " << result;
     cout << "\nНажмите на любую кнопку для продолжения";
     _getch();
-    return;
+}
+
+
+
+TEST(CalculatorTest, RepeatedOperations) {
+    bool Error = false;
+    string Expression = "5 + 5 - 5 * 5 / 5";
+    string result = "5";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTest, NegativeNumbers) {
+    bool Error = false;
+    string Expression = "(-5 + (-5)) * (-1)";
+    string result = "10";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTest, LargeNumberDivision) {
+    bool Error = false;
+    string Expression = "1000000000 / 0.001";
+    string result = "1000000000000";
+    EXPECT_EQ(result, Calculator(Expression, Error));   // "double" problem
+}
+
+TEST(CalculatorTest, FloatingPointPrecision) {
+    bool Error = false;
+    string Expression = "0.1 + 0.2 - 0.3";
+    string result = "0";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTest, NestedParentheses) {
+    bool Error = false;
+    string Expression = "(2 + (3 * (4 - 1))) / 2";
+    string result = "5.500000";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTest, SmallNumbers) {
+    bool Error = false;
+    string Expression = "0.00001 + 0.000001";
+    string result = "0.000011";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTest, MixedIntegerAndFloatingPoint) {
+    bool Error = false;
+    string Expression = "5 + 2.5 * 2 - 3 / 1.5";
+    string result = "8";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTest, VeryLargeNumbers) {
+    bool Error = false;
+    string Expression = "(1000000000 * 1000000000) / (1000000000 - 100000000)";
+    string result = "1111111111.111111";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTest, MixedOperationsPriority) {
+    bool Error = false;
+    string Expression = "6 + 4 / 2 * 3 - 1";
+    string result = "11";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTest, MultipleNestedOperations) {
+    bool Error = false;
+    string Expression = "(((5 + 2) * 3) - 4) / 2";
+    string result = "8.500000";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTest, ZeroAndNegativeNumbers) {
+    bool Error = false;
+    string Expression = "0 * (-2 + 3) / 4";
+    string result = "0";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTest, RepeatedSingleOperation) {
+    bool Error = false;
+    string expr = "1";
+    for (int i = 0; i < 99; ++i) {
+        expr += " - 1 + 1";
+    }
+    string Expression = expr;
+    string result = "1";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTest, MixedPositiveAndNegativeFractions) {
+    bool Error = false;
+    string Expression = "-0.5 + 0.25 - 0.75 + 1";
+    string result = "0";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTest, SequentialOperations) {
+    bool Error = false;
+    string Expression = "((5 + 3) * 2 - (4 / 2)) * 2";
+    string result = "28";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTest, SmallFractions) {
+    bool Error = false;
+    string Expression = "(0.0000000001 + 0.0000000001) * 10000000000";
+    string result = "2.000000";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTest, FractionsResultingInInteger) {
+    bool Error = false;
+    string Expression = "(2 / 3) * 3";
+    string result = "2";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTest, ComplexOperationsCombination) {
+    bool Error = false;
+    string Expression = "(3 + 4 * 2 / (1 - 5) * 2) + 10 / (2 + 3)";
+    string result = "1";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTest, DeepNestedParentheses) {
+    bool Error = false;
+    string Expression = "((((2 + 3) * 2) / 5) - 1) * 2";
+    string result = "2";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTestForErrors, OpenedBrackets) {
+    bool Error = false;
+    string Expression = "3 + 4 * ( 5 - 1";
+    string result = "err";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+    Expression = "3 + 4 * 5 - 1)";
+    result = "err";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTestForErrors, InvalidChar) {
+    bool Error = false;
+    string Expression = "1 _ 1";
+    string result = "err";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+    Expression = "1 -_ 1";
+    result = "err";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+    Expression = "1 + 1 + d";
+    result = "err";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTestForErrors, DividedByZero) {
+    bool Error = false;
+    string Expression = "1 / 0";
+    string result = "err";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+    Expression = "1 / ((-5) * (-1) - 5)";
+    result = "err";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTestForErrors, EmptyLine) {
+    bool Error = false;
+    string Expression = " ";
+    string result = "err";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+    Expression = "        ";
+    result = "err";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+}
+
+TEST(CalculatorTestForErrors, IncompleteLine) {
+    bool Error = false;
+    string Expression = "1 +";
+    string result = "err";
+    EXPECT_EQ(result, Calculator(Expression, Error));
+    Expression = "(3 + 4 * 2 / (1  5) * 2) + 10 / (2 + 3)";
+    result = "err";
+    EXPECT_EQ(result, Calculator(Expression, Error));
 }
