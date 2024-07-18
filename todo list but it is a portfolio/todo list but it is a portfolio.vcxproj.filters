@@ -75,6 +75,12 @@
     <ClCompile Include="StringFinder.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
+    <ClCompile Include="googletest-1.14.0\googletest\src\gtest_main.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="googletest-1.14.0\googletest\src\gtest-all.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ascii_Finder.h">

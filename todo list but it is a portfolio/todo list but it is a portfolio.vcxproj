@@ -71,7 +71,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <IncludePath>$(IncludePath)</IncludePath>
+    <IncludePath>D:\source\repos\todo list but it is a portfolio\todo list but it is a portfolio\googletest-1.14.0\googletest\include;D:\source\repos\todo list but it is a portfolio\todo list but it is a portfolio\googletest-1.14.0\googletest;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -138,6 +138,10 @@
     <ClCompile Include="CsvPars.cpp" />
     <ClCompile Include="Date.cpp">
       <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <ClCompile Include="googletest-1.14.0\googletest\src\gtest-all.cc" />
+    <ClCompile Include="googletest-1.14.0\googletest\src\gtest_main.cc">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="gotoxy.cpp" />
     <ClCompile Include="main.cpp">
