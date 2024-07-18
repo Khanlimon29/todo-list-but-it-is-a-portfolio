@@ -123,7 +123,7 @@ private:
         switch (currOpt) {
             case 0: cout << "Вся программа является списком задач"; _getch(); break;
             case 1: ASCIIfinder(); break;
-            case 2: Calc(); break;
+            case 2: CalculatorMain(); break;
             case 3: tic_tac(); break;
             case 4: RandomNumber(); break;
             case 5: Generator(); break;

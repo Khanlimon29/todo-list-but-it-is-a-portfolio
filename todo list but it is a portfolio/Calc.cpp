@@ -241,7 +241,7 @@ string Calculator(string Expression, bool error) {
     return "err";
 }
 
-void Calc() {
+void CalculatorMain() {
     string Expression;
     bool error = false;
     cout << "Отрицательные числа должны быть заключены в скобки (кроме начала выражения)\n";
