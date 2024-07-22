@@ -8,7 +8,7 @@
 #include "gtest/gtest.h"
 
 using namespace std;
-
+/*
 int Priority(char op) {
     if (op == '+' || op == '-') return 1;
     if (op == '*' || op == '/') return 2;
@@ -183,17 +183,10 @@ long double EvaluateExpression(string& Expression, bool& error) {
     return Values.top();
 }
 
-bool IsOnlySpaces(const string& str) {
-    for (char ch : str) {
-        if (!isspace(ch)) {
-            return false;
-        }
-    }
-    return true;
-}
-
 string Calculator(string Expression, bool error) {
-    if (Expression.empty() || IsOnlySpaces(Expression)) {
+    Expression.erase(remove(Expression.begin(), Expression.end(), ' '), Expression.end()); // очистка от пробелов
+    
+    if (Expression.empty()) {
         return "err";
     }
 
@@ -251,9 +244,166 @@ void CalculatorMain() {
     cout << "Результат: " << result;
     cout << "\nНажмите на любую кнопку для продолжения";
     _getch();
+}*/
+
+class Operation {
+public:
+    virtual double Calculate() const = 0;
+    virtual ~Operation() {}
+};
+
+class Number : public Operation {
+public:
+    Number(double _value) : value(_value) {}
+    double Calculate() const override {
+        return value;
+    }
+private:
+    double value;
+};
+
+class Add : public Operation {
+public:
+    Add(Operation* _left, Operation* _right) : left(_left), right(_right) {}
+    double Calculate() const override {
+        return left->Calculate() + right->Calculate();
+    }
+private:
+    unique_ptr<Operation> left;
+    unique_ptr<Operation> right;
+};
+
+class Subtract : public Operation {
+public:
+    Subtract(Operation* _left, Operation* _right) : left(_left), right(_right) {}
+    double Calculate() const override {
+        return left->Calculate() - right->Calculate();
+    }
+private:
+    unique_ptr<Operation> left;
+    unique_ptr<Operation> right;
+};
+
+class Multiply : public Operation {
+public:
+    Multiply(Operation* _left, Operation* _right) : left(_left), right(_right) {}
+    double Calculate() const override {
+        return left->Calculate() * right->Calculate();
+    }
+private:
+    unique_ptr<Operation> left;
+    unique_ptr<Operation> right;
+};
+
+class Divide : public Operation {
+public:
+    Divide(Operation* _left, Operation* _right) : left(_left), right(_right) {}
+    double Calculate() const override {
+        return left->Calculate() / right->Calculate();
+    }
+private:
+    unique_ptr<Operation> left;
+    unique_ptr<Operation> right;
+};
+
+///////////////////////////////////////
+//////////ТЕСТЫ ДЛЯ ДЕРЕВЬЕВ///////////
+///////////////////////////////////////
+
+TEST(ClassTest, NumberTest) {
+    Number number(5.0);
+    EXPECT_EQ(number.Calculate(), 5.0);
 }
 
+TEST(ClassTest, AddTest) {
+    auto left = make_unique<Number>(5.0);
+    auto right = make_unique<Number>(1.0);
+    Add add(left.release(), right.release());
+    EXPECT_EQ(add.Calculate(), 6.0);
+}
 
+TEST(ClassTest, SubtractTest) {
+    auto left = make_unique<Number>(5.0);
+    auto right = make_unique<Number>(1.0);
+    Subtract sub(left.release(), right.release());
+    EXPECT_EQ(sub.Calculate(), 4.0);
+}
+
+TEST(ClassTest, MultiplyTest) {
+    auto left = make_unique<Number>(5.0);
+    auto right = make_unique<Number>(2.0);
+    Multiply mul(left.release(), right.release());
+    EXPECT_EQ(mul.Calculate(), 10.0);
+}
+
+TEST(ClassTest, DivideTest) {
+    auto left = make_unique<Number>(5.0);
+    auto right = make_unique<Number>(2.0);
+    Divide div(left.release(), right.release());
+    EXPECT_EQ(div.Calculate(), 2.5);
+}
+
+TEST(CalculationTest, Expression1) {
+    // (3 + (2 * 4)) = 11
+    auto expr = make_unique<Add>(
+        new Number(3),
+        new Multiply(
+            new Number(2),
+            new Number(4)
+        )
+    );
+    EXPECT_EQ(expr->Calculate(), 11);
+}
+
+TEST(CalculationTest, Expression2) {
+    // ((7 - 2) * (8 / 4)) = 10
+    auto expr = make_unique<Multiply>(
+        new Subtract(
+            new Number(7),
+            new Number(2)
+        ),
+        new Divide(
+            new Number(8),
+            new Number(4)
+        )
+    );
+    EXPECT_EQ(expr->Calculate(), 10);
+}
+
+TEST(CalculationTest, Expression3) {
+    // (10 / (5 - 3)) + 6 = 11
+    auto expr = make_unique<Add>(
+        new Divide(
+            new Number(10),
+            new Subtract(
+                new Number(5),
+                new Number(3)
+            )
+        ),
+        new Number(6)
+    );
+    EXPECT_EQ(expr->Calculate(), 11);
+}
+
+TEST(CalculationTest, ExpressionWithNegative) {
+    // -10 * (3 + (-1)) / (-2) = 10
+    auto expr = make_unique<Divide>(
+        new Multiply(
+            new Number(-10),
+            new Add(
+                new Number(3),
+                new Number(-1)
+            )
+        ),
+        new Number(-2)
+    );
+    EXPECT_EQ(expr->Calculate(), 10);
+}
+
+/*
+///////////////////////////////////////
+////////ТЕСТЫ ДЛЯ КАЛЬКУЛЯТОРА/////////
+///////////////////////////////////////
 
 TEST(CalculatorTest, RepeatedOperations) {
     bool Error = false;
@@ -437,3 +587,4 @@ TEST(CalculatorTestForErrors, IncompleteLine) {
     result = "err";
     EXPECT_EQ(result, Calculator(Expression, Error));
 }
+*/
