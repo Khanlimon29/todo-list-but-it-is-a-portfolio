@@ -286,9 +286,9 @@ public:
     double Calculate() const override {
         return left->Calculate() - right->Calculate();
     }
-	string GetStructure() const override {
-		return "Subtract(" + left->GetStructure() + ", " + right->GetStructure() + ")";   // для тестирования
-	}
+    string GetStructure() const override {
+        return "Subtract(" + left->GetStructure() + ", " + right->GetStructure() + ")";   // для тестирования
+    }
 private:
     unique_ptr<Operation> left;
     unique_ptr<Operation> right;
@@ -300,9 +300,9 @@ public:
     double Calculate() const override {
         return left->Calculate() * right->Calculate();
     }
-	string GetStructure() const override {
-		return "Multiply(" + left->GetStructure() + ", " + right->GetStructure() + ")";   // для тестирования
-	}
+    string GetStructure() const override {
+        return "Multiply(" + left->GetStructure() + ", " + right->GetStructure() + ")";   // для тестирования
+    }
 private:
     unique_ptr<Operation> left;
     unique_ptr<Operation> right;
@@ -315,8 +315,8 @@ public:
         return left->Calculate() / right->Calculate();
     }
     string GetStructure() const override {
-		    return "Divide(" + left->GetStructure() + ", " + right->GetStructure() + ")";   // для тестирования
-	    }
+        return "Divide(" + left->GetStructure() + ", " + right->GetStructure() + ")";   // для тестирования
+    }
 private:
     unique_ptr<Operation> left;
     unique_ptr<Operation> right;
@@ -324,9 +324,14 @@ private:
 
 class ExpressionParser {
 public:
-    ExpressionParser(const string& expr) : expression(expr) {}
+    ExpressionParser(const string& expr) : expression(expr) {
+        removeSpaces();
+    }
 
     unique_ptr<Operation> parse() {
+        if (expression.empty()) {
+            return make_unique<Number>(0);
+        }
         tokenize();
         processOperators();
         return move(values.top());
@@ -336,7 +341,7 @@ private:
     string expression;
     stack<unique_ptr<Operation>> values;
     stack<char> operators;
- 
+
     bool isOperator(char c) {
         return c == '+' || c == '-' || c == '*' || c == '/';
     }
@@ -382,16 +387,28 @@ private:
         values.push(applyOperation(op, move(left), move(right)));
     }
 
-    void tokenize() {
-        istringstream iss(expression);
-        string token;
+    void removeSpaces() {
+        expression.erase(remove(expression.begin(), expression.end(), ' '), expression.end());
+    }
 
-        while (iss >> token) {
-            if (isdigit(token[0])) {
-                values.push(make_unique<Number>(stod(token)));
+    bool isNumberStart(size_t index) {
+        if (index >= expression.length()) return false; // защита от вылета с index + 1
+        if (isdigit(expression[index])) return true;
+        if (expression[index] == '.' && index + 1 < expression.length() && isdigit(expression[index + 1])) return true;
+        return false;
+    }
+
+    void tokenize() {
+        for (size_t i = 0; i < expression.length();) {
+            if (isNumberStart(i)) {
+                size_t length;
+                double number = stod(expression.substr(i), &length);
+                values.push(make_unique<Number>(number));
+                i += length;
             }
-            else if (isOperator(token[0])) {
-                processCurrentOperator(token[0]);
+            else if (isOperator(expression[i])) {
+                processCurrentOperator(expression[i]);
+                ++i;
             }
         }
     }
@@ -496,6 +513,18 @@ TEST(CalculationTest, ExpressionWithNegative) {
 //////////ТЕСТЫ ДЛЯ ПАРСЕРА////////////
 ///////////////////////////////////////
 
+TEST(ExpressionParserTest, NoSpaces) { // я проглядел самое очевидное
+    ExpressionParser Tree("3+4*5-6");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Subtract(Add(Number(3.000000), Multiply(Number(4.000000), Number(5.000000))), Number(6.000000))");
+}
+
+TEST(ExpressionParserTest, СombinedSpaces) {
+    ExpressionParser Tree("3+4 * 5- 6");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Subtract(Add(Number(3.000000), Multiply(Number(4.000000), Number(5.000000))), Number(6.000000))");
+}
+
 TEST(ExpressionParserTest, SingleNumber) {
     ExpressionParser Tree ("42");
     unique_ptr<Operation> treeExpression = Tree.parse();
@@ -562,7 +591,20 @@ TEST(ExpressionParserTest, ComplexExpression5) {
     EXPECT_EQ(treeExpression->GetStructure(), "Subtract(Add(Number(2.000000), Multiply(Number(3.000000), Number(4.000000))), Divide(Number(5.000000), Number(6.000000)))");
 }
 
+TEST(ExpressionParserTest, ComplexExpression6) {
+    ExpressionParser Tree("2.1+3.5* 4.7-5/6");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Subtract(Add(Number(2.100000), Multiply(Number(3.500000), Number(4.700000))), Divide(Number(5.000000), Number(6.000000)))");
+}
+
 //TODO: Поддержка отрицательных чисел, скобок и ошибок
+
+TEST(ExpressionParserTest, EmptyExpression) {
+    ExpressionParser Tree("");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Number(0.000000)");
+}
+
 TEST(ExpressionParserTest, NegativeNumber) {
     ExpressionParser Tree("-3 + 4");
     unique_ptr<Operation> treeExpression = Tree.parse();
@@ -590,25 +632,19 @@ TEST(ExpressionParserTest, ExpressionWithParentheses) {
 TEST(ExpressionParserTest, NestedParentheses) {
     ExpressionParser parser("3 + (4 * (2 - 1))");
     auto operation = parser.parse();
-    EXPECT_EQ(operation->GetStructure(), "Add(Number(3), Multiply(Number(4), Subtract(Number(2), Number(1))))");
+    EXPECT_EQ(operation->GetStructure(), "Add(Number(3.000000), Multiply(Number(4.000000), Subtract(Number(2.000000), Number(1.000000))))");
 }
 
 TEST(ExpressionParserTest, MultipleParentheses) {
     ExpressionParser parser("((3 + 4) * (2 - 1)) / 2");
     auto operation = parser.parse();
-    EXPECT_EQ(operation->GetStructure(), "Divide(Multiply(Add(Number(3), Number(4)), Subtract(Number(2), Number(1))), Number(2))");
+    EXPECT_EQ(operation->GetStructure(), "Divide(Multiply(Add(Number(3.000000), Number(4.000000)), Subtract(Number(2.000000), Number(1.000000))), Number(2.000000))");
 }
 
 TEST(ExpressionParserTest, NegativeNumbersWithParentheses) {
     ExpressionParser parser("(-3 + 5) * (-2)");
     auto operation = parser.parse();
     EXPECT_EQ(operation->GetStructure(), "Multiply(Add(Number(-3.000000), Number(5.000000)), Number(-2.000000))");
-}
-
-TEST(ExpressionParserTestForErrors, EmptyExpression) {
-    ExpressionParser Tree("");
-    unique_ptr<Operation> treeExpression = Tree.parse();
-    EXPECT_EQ(treeExpression->GetStructure(), "Number(0.000000)");
 }
 
 ///////////////////////////////////////
