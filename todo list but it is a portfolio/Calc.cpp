@@ -395,20 +395,49 @@ private:
         if (index >= expression.length()) return false; // защита от вылета с index + 1
         if (isdigit(expression[index])) return true;
         if (expression[index] == '.' && index + 1 < expression.length() && isdigit(expression[index + 1])) return true;
+        if (expression[index] == '-' && (index == 0 || expression[index - 1] == '(') && index + 1 < expression.length() && isdigit(expression[index + 1])) return true; // обработка отрицательных чисел одной строчкой :Oppenheimer:
         return false;
     }
 
-    void tokenize() {
-        for (size_t i = 0; i < expression.length();) {
-            if (isNumberStart(i)) {
-                size_t length;
-                double number = stod(expression.substr(i), &length);
-                values.push(make_unique<Number>(number));
-                i += length;
+    void handleNumber(size_t& index) {
+        size_t length;
+        double number = stod(expression.substr(index), &length);
+        values.push(make_unique<Number>(number));
+        index += length;
+    }
+
+    void handleOperator(size_t& index) {
+        processCurrentOperator(expression[index]);
+        index++;
+    }
+
+    void handleParentheses(size_t& index) {
+        if (expression[index] == '(') {
+            operators.push(expression[index]);
+        }
+        else if (expression[index] == ')') {
+            while (!operators.empty() && operators.top() != '(') {
+                applyTopOperator();
             }
-            else if (isOperator(expression[i])) {
-                processCurrentOperator(expression[i]);
-                ++i;
+            operators.pop();
+        }
+        index++;
+    }
+
+    bool isParentheses(size_t& index) {
+        return expression[index] == '(' || expression[index] == ')';
+    }
+
+    void tokenize() {
+        for (size_t index = 0; index < expression.length();) {          
+            if (isParentheses(index)) {
+                handleParentheses(index);
+            }
+            else if (isNumberStart(index)) {
+                handleNumber(index);
+            }
+            else if (isOperator(expression[index])) {
+                handleOperator(index);
             }
         }
     }
@@ -418,7 +447,6 @@ private:
 //////////ТЕСТЫ ДЛЯ ДЕРЕВЬЕВ///////////
 ///////////////////////////////////////
 
-/*
 TEST(ClassTest, NumberTest) {
     Number number(5.0);
     EXPECT_EQ(number.Calculate(), 5.0);
@@ -507,7 +535,7 @@ TEST(CalculationTest, ExpressionWithNegative) {
         new Number(-2)
     );
     EXPECT_EQ(expr->Calculate(), 10);
-}*/
+}
 
 ///////////////////////////////////////
 //////////ТЕСТЫ ДЛЯ ПАРСЕРА////////////
@@ -597,14 +625,6 @@ TEST(ExpressionParserTest, ComplexExpression6) {
     EXPECT_EQ(treeExpression->GetStructure(), "Subtract(Add(Number(2.100000), Multiply(Number(3.500000), Number(4.700000))), Divide(Number(5.000000), Number(6.000000)))");
 }
 
-//TODO: Поддержка отрицательных чисел, скобок и ошибок
-
-TEST(ExpressionParserTest, EmptyExpression) {
-    ExpressionParser Tree("");
-    unique_ptr<Operation> treeExpression = Tree.parse();
-    EXPECT_EQ(treeExpression->GetStructure(), "Number(0.000000)");
-}
-
 TEST(ExpressionParserTest, NegativeNumber) {
     ExpressionParser Tree("-3 + 4");
     unique_ptr<Operation> treeExpression = Tree.parse();
@@ -645,6 +665,14 @@ TEST(ExpressionParserTest, NegativeNumbersWithParentheses) {
     ExpressionParser parser("(-3 + 5) * (-2)");
     auto operation = parser.parse();
     EXPECT_EQ(operation->GetStructure(), "Multiply(Add(Number(-3.000000), Number(5.000000)), Number(-2.000000))");
+}
+
+//TODO: Обработка ошибок
+
+TEST(ExpressionParserErrorTest, EmptyExpression) {
+    ExpressionParser Tree("");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Err");
 }
 
 ///////////////////////////////////////
