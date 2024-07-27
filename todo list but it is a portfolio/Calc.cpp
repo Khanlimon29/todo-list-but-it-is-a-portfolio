@@ -246,6 +246,14 @@ void CalculatorMain() {
     _getch();
 }*/
 
+enum class ParseError {
+    SYNTAX_ERROR,
+    UNCLOSED_BRACKETS,
+    INVALID_CHARACTERS,
+    EMPTY,
+    NONE
+};
+
 class Operation {
 public:
     virtual double Calculate() const = 0;
@@ -322,42 +330,34 @@ private:
     unique_ptr<Operation> right;
 };
 
-class Error : public Operation {               // для тестирования
-public:
-    string GetStructure() const override {
-        return "Err";
-    }
-    double Calculate() const override {
-        throw runtime_error("Err");
-    }
-};
-
 class ExpressionParser {
 public:
-    ExpressionParser(const string& expr) : expression(expr) {
+    ExpressionParser(const string& expr) : expression(expr), errorCode(ParseError::NONE) {
         removeSpaces();
     }
 
     unique_ptr<Operation> parse() {
         if (expression.empty()) {
-            errorCode = true;
+            errorCode = ParseError::EMPTY;
+			return nullptr;
         }
         tokenize();
-        if (errorCode) {
-            return make_unique<Error>();
+        if (errorCode != ParseError::NONE) {
+            return nullptr;
         }
         processOperators();
-        if (values.size() != 1) {
-            return make_unique<Error>();
-        }
         return move(values.top());
+    }
+
+    ParseError getErrorCode() const {
+        return errorCode;
     }
 
 private:
     string expression;
     stack<unique_ptr<Operation>> values;
     stack<char> operators;
-    bool errorCode = false; // placeholder
+    ParseError errorCode;
     int parenthesesBalance = 0;
 
     bool isOperator(char c) {
@@ -434,7 +434,7 @@ private:
 
     void handleOperator(size_t& index) {
         if (isOperatorAtStartOfExpression(index) || isInvalidOperatorPrecedence(index)) {
-            errorCode = true;
+            errorCode = ParseError::SYNTAX_ERROR;
         }
         else {
             processCurrentOperator(expression[index]);
@@ -452,10 +452,7 @@ private:
             while (!operators.empty() && operators.top() != '(') {
                 applyTopOperator();
             }
-            if (operators.empty() || parenthesesBalance < 0) {
-                errorCode = true;
-            }
-            else {
+            if (!(operators.empty() || parenthesesBalance < 0)) {
                 operators.pop();
             }
         }
@@ -470,13 +467,11 @@ private:
         return isdigit(index) || index == '+' || index == '-' || index == '*' || index == '/' || index == '(' || index == ')' || index == '.';
     }
 
-
-
     void tokenize() {
         for (size_t index = 0; index < expression.length();) {
             if (!isValidChar(expression[index])) {
-                errorCode = true;
-                break;
+                errorCode = ParseError::INVALID_CHARACTERS;
+                return;
             }
             else if (isParentheses(index)) {
                 handleParentheses(index);
@@ -489,7 +484,13 @@ private:
             }
         }
         if (parenthesesBalance != 0) {
-            errorCode = true;
+            errorCode = ParseError::UNCLOSED_BRACKETS;
+            return;
+        }
+
+        if (isOperator(expression.back())) {
+            errorCode = ParseError::SYNTAX_ERROR;
+            return;
         }
     }
 };
@@ -596,192 +597,231 @@ TEST(ExpressionParserTest, NoSpaces) { // я проглядел самое оч�
     ExpressionParser Tree("3+4*5-6");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Subtract(Add(Number(3.000000), Multiply(Number(4.000000), Number(5.000000))), Number(6.000000))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, СombinedSpaces) {
     ExpressionParser Tree("3+4 * 5- 6");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Subtract(Add(Number(3.000000), Multiply(Number(4.000000), Number(5.000000))), Number(6.000000))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, SingleNumber) {
     ExpressionParser Tree ("42");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Number(42.000000)");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, AdditionStructure) {
     ExpressionParser Tree("3 + 4");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Add(Number(3.000000), Number(4.000000))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, SubtractionStructure) {
     ExpressionParser Tree("7 - 2");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Subtract(Number(7.000000), Number(2.000000))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, MultiplicationStructure) {
     ExpressionParser Tree("2 * 3");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Multiply(Number(2.000000), Number(3.000000))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, DivisionStructure) {
     ExpressionParser Tree("8 / 4");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Divide(Number(8.000000), Number(4.000000))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, ComplexExpression) {
     ExpressionParser Tree("3 + 4 * 2");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Add(Number(3.000000), Multiply(Number(4.000000), Number(2.000000)))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, ComplexExpression1) {
     ExpressionParser Tree("3 + 4 * 5 - 6");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Subtract(Add(Number(3.000000), Multiply(Number(4.000000), Number(5.000000))), Number(6.000000))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, ComplexExpression2) {
     ExpressionParser Tree("7 * 8 / 2 + 3");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Add(Divide(Multiply(Number(7.000000), Number(8.000000)), Number(2.000000)), Number(3.000000))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, ComplexExpression3) {
     ExpressionParser Tree("10 + 11 - 12 * 13 / 14");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Subtract(Add(Number(10.000000), Number(11.000000)), Divide(Multiply(Number(12.000000), Number(13.000000)), Number(14.000000)))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, ComplexExpression4) {
     ExpressionParser Tree("15 / 3 * 4 + 5 - 6");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Subtract(Add(Multiply(Divide(Number(15.000000), Number(3.000000)), Number(4.000000)), Number(5.000000)), Number(6.000000))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, ComplexExpression5) {
     ExpressionParser Tree("2 + 3 * 4 - 5 / 6");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Subtract(Add(Number(2.000000), Multiply(Number(3.000000), Number(4.000000))), Divide(Number(5.000000), Number(6.000000)))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, ComplexExpression6) {
     ExpressionParser Tree("2.1+3.5* 4.7-5/6");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Subtract(Add(Number(2.100000), Multiply(Number(3.500000), Number(4.700000))), Divide(Number(5.000000), Number(6.000000)))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, NegativeNumber) {
     ExpressionParser Tree("-3 + 4");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Add(Number(-3.000000), Number(4.000000))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, NegativeNumber1) {
     ExpressionParser Tree("(-3) + 4");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Add(Number(-3.000000), Number(4.000000))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, NegativeNumber2) {
     ExpressionParser Tree("(5 - (-3))");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Subtract(Number(5.000000), Number(-3.000000))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, ExpressionWithParentheses) {
     ExpressionParser Tree("3 + 4 * (2 - 1)");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Add(Number(3.000000), Multiply(Number(4.000000), Subtract(Number(2.000000), Number(1.000000))))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, NestedParentheses) {
     ExpressionParser parser("3 + (4 * (2 - 1))");
     auto operation = parser.parse();
     EXPECT_EQ(operation->GetStructure(), "Add(Number(3.000000), Multiply(Number(4.000000), Subtract(Number(2.000000), Number(1.000000))))");
+    EXPECT_EQ(parser.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, MultipleParentheses) {
     ExpressionParser parser("((3 + 4) * (2 - 1)) / 2");
     auto operation = parser.parse();
     EXPECT_EQ(operation->GetStructure(), "Divide(Multiply(Add(Number(3.000000), Number(4.000000)), Subtract(Number(2.000000), Number(1.000000))), Number(2.000000))");
+    EXPECT_EQ(parser.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, NegativeNumbersWithParentheses) {
     ExpressionParser parser("(-3 + 5) * (-2)");
     auto operation = parser.parse();
     EXPECT_EQ(operation->GetStructure(), "Multiply(Add(Number(-3.000000), Number(5.000000)), Number(-2.000000))");
+    EXPECT_EQ(parser.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserErrorTest, EmptyExpression) {
     ExpressionParser Tree("");
     unique_ptr<Operation> treeExpression = Tree.parse();
-    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+    EXPECT_EQ(treeExpression, nullptr);
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::EMPTY);
 }
 
 TEST(ExpressionParserErrorTest, IncorrectExpression) {
     ExpressionParser Tree("1 - + 3 - 1 + 2");
     unique_ptr<Operation> treeExpression = Tree.parse();
-    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+    EXPECT_EQ(treeExpression, nullptr);
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::SYNTAX_ERROR);
 }
 
 TEST(ExpressionParserErrorTest, IncorrectExpression1) {
     ExpressionParser Tree("1 + - 3 - 1 + 2");
     unique_ptr<Operation> treeExpression = Tree.parse();
-    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+    EXPECT_EQ(treeExpression, nullptr);
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::SYNTAX_ERROR);
 }
 
 TEST(ExpressionParserErrorTest, IncorrectExpressionLetters) {
     ExpressionParser Tree("1 + 5 + k - 1");
     unique_ptr<Operation> treeExpression = Tree.parse();
-    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+    EXPECT_EQ(treeExpression, nullptr);
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::INVALID_CHARACTERS);
 }
 
 TEST(ExpressionParserErrorTest, IncorrectExpressionOperators) {
     ExpressionParser Tree("1 - 3 _ 1 + 2");
     unique_ptr<Operation> treeExpression = Tree.parse();
-    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+    EXPECT_EQ(treeExpression, nullptr);
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::INVALID_CHARACTERS);
 }
 
 TEST(ExpressionParserErrorTest, IncorrectParetheses) {
     ExpressionParser Tree("(1 + 3) + 1)");
     unique_ptr<Operation> treeExpression = Tree.parse();
-    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+    EXPECT_EQ(treeExpression, nullptr);
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::UNCLOSED_BRACKETS);
 }
 
 TEST(ExpressionParserErrorTest, IncorrectParetheses1) {
     ExpressionParser Tree("((1 + 3) + 1");
     unique_ptr<Operation> treeExpression = Tree.parse();
-    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+    EXPECT_EQ(treeExpression, nullptr);
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::UNCLOSED_BRACKETS);
 }
 
 TEST(ExpressionParserErrorTest, IncorrectParetheses2) {
     ExpressionParser Tree("4 + (-1 + 1");
     unique_ptr<Operation> treeExpression = Tree.parse();
-    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+    EXPECT_EQ(treeExpression, nullptr);
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::UNCLOSED_BRACKETS);
 }
 
 TEST(ExpressionParserErrorTest, IncorrectParetheses3) {
     ExpressionParser Tree("4 + -1) + 1");
     unique_ptr<Operation> treeExpression = Tree.parse();
-    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+    EXPECT_EQ(treeExpression, nullptr);
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::UNCLOSED_BRACKETS);
 }
 
 TEST(ExpressionParserErrorTest, IncorrectExpressionMixed) {
     ExpressionParser Tree(" (4 + k _ 1");
     unique_ptr<Operation> treeExpression = Tree.parse();
-    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+    EXPECT_EQ(treeExpression, nullptr);
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::INVALID_CHARACTERS);
 }
 
 TEST(ExpressionParserErrorTest, IncompletedExpression) {
     ExpressionParser Tree(" (4 + 1 +");
     unique_ptr<Operation> treeExpression = Tree.parse();
-    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+    EXPECT_EQ(treeExpression, nullptr);
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::UNCLOSED_BRACKETS);
+}
+
+TEST(ExpressionParserErrorTest, IncompletedExpression1) {
+    ExpressionParser Tree("4 + 1 +");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression, nullptr);
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::SYNTAX_ERROR);
 }
 
 
