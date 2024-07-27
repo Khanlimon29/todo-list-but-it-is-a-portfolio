@@ -720,24 +720,24 @@ TEST(ExpressionParserTest, ExpressionWithParentheses) {
 }
 
 TEST(ExpressionParserTest, NestedParentheses) {
-    ExpressionParser parser("3 + (4 * (2 - 1))");
-    auto operation = parser.parse();
-    EXPECT_EQ(operation->GetStructure(), "Add(Number(3.000000), Multiply(Number(4.000000), Subtract(Number(2.000000), Number(1.000000))))");
-    EXPECT_EQ(parser.getErrorCode(), ParseError::NONE);
+    ExpressionParser Tree("3 + (4 * (2 - 1))");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Add(Number(3.000000), Multiply(Number(4.000000), Subtract(Number(2.000000), Number(1.000000))))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, MultipleParentheses) {
-    ExpressionParser parser("((3 + 4) * (2 - 1)) / 2");
-    auto operation = parser.parse();
-    EXPECT_EQ(operation->GetStructure(), "Divide(Multiply(Add(Number(3.000000), Number(4.000000)), Subtract(Number(2.000000), Number(1.000000))), Number(2.000000))");
-    EXPECT_EQ(parser.getErrorCode(), ParseError::NONE);
+    ExpressionParser Tree("((3 + 4) * (2 - 1)) / 2");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Divide(Multiply(Add(Number(3.000000), Number(4.000000)), Subtract(Number(2.000000), Number(1.000000))), Number(2.000000))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserTest, NegativeNumbersWithParentheses) {
-    ExpressionParser parser("(-3 + 5) * (-2)");
-    auto operation = parser.parse();
-    EXPECT_EQ(operation->GetStructure(), "Multiply(Add(Number(-3.000000), Number(5.000000)), Number(-2.000000))");
-    EXPECT_EQ(parser.getErrorCode(), ParseError::NONE);
+    ExpressionParser Tree("(-3 + 5) * (-2)");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Multiply(Add(Number(-3.000000), Number(5.000000)), Number(-2.000000))");
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
 }
 
 TEST(ExpressionParserErrorTest, EmptyExpression) {
@@ -829,137 +829,155 @@ TEST(ExpressionParserErrorTest, IncompletedExpression1) {
 ////////ТЕСТЫ ДЛЯ КАЛЬКУЛЯТОРА/////////
 ///////////////////////////////////////
 
-/*
 TEST(CalculatorTest, RepeatedOperations) {
-    bool Error = false;
     string Expression = "5 + 5 - 5 * 5 / 5";
-    string result = "5";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    double result = 5;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_EQ(result, Tree->Calculate());
 }
 
 TEST(CalculatorTest, NegativeNumbers) {
-    bool Error = false;
     string Expression = "(-5 + (-5)) * (-1)";
-    string result = "10";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    double result = 10;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_EQ(result, Tree->Calculate());
 }
 
 TEST(CalculatorTest, LargeNumberDivision) {
-    bool Error = false;
     string Expression = "1000000000 / 0.001";
-    string result = "1000000000000";
-    EXPECT_EQ(result, Calculator(Expression, Error));   // "double" problem
+    double result = 1000000000000;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_EQ(result, Tree->Calculate());
 }
 
 TEST(CalculatorTest, FloatingPointPrecision) {
-    bool Error = false;
     string Expression = "0.1 + 0.2 - 0.3";
-    string result = "0";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    double result = 0;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_NEAR(result, Tree->Calculate(), 1e-9); // some dude from github said 5.5511151231257827e-17 You possibly computed 3 * 0.1 - 0.3 (or something similar) in double precision floating point arithmetic. It's close enough to zero that you can probably stop worrying and get on with life.
 }
 
 TEST(CalculatorTest, NestedParentheses) {
-    bool Error = false;
     string Expression = "(2 + (3 * (4 - 1))) / 2";
-    string result = "5.500000";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    double result = 5.5;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_EQ(result, Tree->Calculate());
 }
 
 TEST(CalculatorTest, SmallNumbers) {
-    bool Error = false;
     string Expression = "0.00001 + 0.000001";
-    string result = "0.000011";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    double result = 0.000011;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_DOUBLE_EQ(result, Tree->Calculate());
 }
 
 TEST(CalculatorTest, MixedIntegerAndFloatingPoint) {
-    bool Error = false;
     string Expression = "5 + 2.5 * 2 - 3 / 1.5";
-    string result = "8";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    double result = 8;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_EQ(result, Tree->Calculate());
 }
 
 TEST(CalculatorTest, VeryLargeNumbers) {
-    bool Error = false;
     string Expression = "(1000000000 * 1000000000) / (1000000000 - 100000000)";
-    string result = "1111111111.111111";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    double result = 1111111111.111111;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_DOUBLE_EQ(result, Tree->Calculate());
 }
 
 TEST(CalculatorTest, MixedOperationsPriority) {
-    bool Error = false;
     string Expression = "6 + 4 / 2 * 3 - 1";
-    string result = "11";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    double result = 11;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_EQ(result, Tree->Calculate());
 }
 
 TEST(CalculatorTest, MultipleNestedOperations) {
-    bool Error = false;
     string Expression = "(((5 + 2) * 3) - 4) / 2";
-    string result = "8.500000";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    double result = 8.5;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_EQ(result, Tree->Calculate());
 }
 
 TEST(CalculatorTest, ZeroAndNegativeNumbers) {
-    bool Error = false;
     string Expression = "0 * (-2 + 3) / 4";
-    string result = "0";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    double result = 0;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_EQ(result, Tree->Calculate());
 }
 
 TEST(CalculatorTest, RepeatedSingleOperation) {
-    bool Error = false;
     string expr = "1";
     for (int i = 0; i < 99; ++i) {
         expr += " - 1 + 1";
     }
     string Expression = expr;
-    string result = "1";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    double result = 1;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_EQ(result, Tree->Calculate());
 }
 
 TEST(CalculatorTest, MixedPositiveAndNegativeFractions) {
-    bool Error = false;
     string Expression = "-0.5 + 0.25 - 0.75 + 1";
-    string result = "0";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    double result = 0;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_EQ(result, Tree->Calculate());
 }
 
 TEST(CalculatorTest, SequentialOperations) {
-    bool Error = false;
     string Expression = "((5 + 3) * 2 - (4 / 2)) * 2";
-    string result = "28";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    double result = 28;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_EQ(result, Tree->Calculate());
 }
 
 TEST(CalculatorTest, SmallFractions) {
-    bool Error = false;
     string Expression = "(0.0000000001 + 0.0000000001) * 10000000000";
-    string result = "2.000000";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    double result = 2.000000;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_EQ(result, Tree->Calculate());
 }
 
 TEST(CalculatorTest, FractionsResultingInInteger) {
-    bool Error = false;
     string Expression = "(2 / 3) * 3";
-    string result = "2";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    double result = 2;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_EQ(result, Tree->Calculate());
 }
 
 TEST(CalculatorTest, ComplexOperationsCombination) {
-    bool Error = false;
     string Expression = "(3 + 4 * 2 / (1 - 5) * 2) + 10 / (2 + 3)";
-    string result = "1";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    double result = 1;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_EQ(result, Tree->Calculate());
 }
 
 TEST(CalculatorTest, DeepNestedParentheses) {
-    bool Error = false;
     string Expression = "((((2 + 3) * 2) / 5) - 1) * 2";
-    string result = "2";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    double result = 2;
+    unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
+    ASSERT_TRUE(Tree != nullptr);
+    EXPECT_EQ(result, Tree->Calculate());
 }
 
+/*
 TEST(CalculatorTestForErrors, OpenedBrackets) {
     bool Error = false;
     string Expression = "3 + 4 * ( 5 - 1";
