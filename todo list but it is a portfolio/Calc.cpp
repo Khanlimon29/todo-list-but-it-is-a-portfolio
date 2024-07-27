@@ -322,6 +322,16 @@ private:
     unique_ptr<Operation> right;
 };
 
+class Error : public Operation {               // для тестирования
+public:
+    string GetStructure() const override {
+        return "Err";
+    }
+    double Calculate() const override {
+        throw runtime_error("Err");
+    }
+};
+
 class ExpressionParser {
 public:
     ExpressionParser(const string& expr) : expression(expr) {
@@ -330,10 +340,16 @@ public:
 
     unique_ptr<Operation> parse() {
         if (expression.empty()) {
-            return make_unique<Number>(0);
+            errorCode = true;
         }
         tokenize();
+        if (errorCode) {
+            return make_unique<Error>();
+        }
         processOperators();
+        if (values.size() != 1) {
+            return make_unique<Error>();
+        }
         return move(values.top());
     }
 
@@ -341,6 +357,8 @@ private:
     string expression;
     stack<unique_ptr<Operation>> values;
     stack<char> operators;
+    bool errorCode = false; // placeholder
+    int parenthesesBalance = 0;
 
     bool isOperator(char c) {
         return c == '+' || c == '-' || c == '*' || c == '/';
@@ -406,20 +424,40 @@ private:
         index += length;
     }
 
+    bool isOperatorAtStartOfExpression(size_t index) {
+        return values.empty() && expression[index] != '-';
+    }
+
+    bool isInvalidOperatorPrecedence(size_t& index) {
+        return !values.empty() && !operators.empty() && isOperator(expression[index - 1]) && expression[index - 1] != '(';
+    }
+
     void handleOperator(size_t& index) {
-        processCurrentOperator(expression[index]);
+        if (isOperatorAtStartOfExpression(index) || isInvalidOperatorPrecedence(index)) {
+            errorCode = true;
+        }
+        else {
+            processCurrentOperator(expression[index]);
+        }
         index++;
     }
 
     void handleParentheses(size_t& index) {
         if (expression[index] == '(') {
             operators.push(expression[index]);
+            parenthesesBalance++;
         }
         else if (expression[index] == ')') {
+            parenthesesBalance--;
             while (!operators.empty() && operators.top() != '(') {
                 applyTopOperator();
             }
-            operators.pop();
+            if (operators.empty() || parenthesesBalance < 0) {
+                errorCode = true;
+            }
+            else {
+                operators.pop();
+            }
         }
         index++;
     }
@@ -428,9 +466,19 @@ private:
         return expression[index] == '(' || expression[index] == ')';
     }
 
+    bool isValidChar(char index) {
+        return isdigit(index) || index == '+' || index == '-' || index == '*' || index == '/' || index == '(' || index == ')' || index == '.';
+    }
+
+
+
     void tokenize() {
-        for (size_t index = 0; index < expression.length();) {          
-            if (isParentheses(index)) {
+        for (size_t index = 0; index < expression.length();) {
+            if (!isValidChar(expression[index])) {
+                errorCode = true;
+                break;
+            }
+            else if (isParentheses(index)) {
                 handleParentheses(index);
             }
             else if (isNumberStart(index)) {
@@ -439,6 +487,9 @@ private:
             else if (isOperator(expression[index])) {
                 handleOperator(index);
             }
+        }
+        if (parenthesesBalance != 0) {
+            errorCode = true;
         }
     }
 };
@@ -667,13 +718,72 @@ TEST(ExpressionParserTest, NegativeNumbersWithParentheses) {
     EXPECT_EQ(operation->GetStructure(), "Multiply(Add(Number(-3.000000), Number(5.000000)), Number(-2.000000))");
 }
 
-//TODO: Обработка ошибок
-
 TEST(ExpressionParserErrorTest, EmptyExpression) {
     ExpressionParser Tree("");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Err");
 }
+
+TEST(ExpressionParserErrorTest, IncorrectExpression) {
+    ExpressionParser Tree("1 - + 3 - 1 + 2");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+}
+
+TEST(ExpressionParserErrorTest, IncorrectExpression1) {
+    ExpressionParser Tree("1 + - 3 - 1 + 2");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+}
+
+TEST(ExpressionParserErrorTest, IncorrectExpressionLetters) {
+    ExpressionParser Tree("1 + 5 + k - 1");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+}
+
+TEST(ExpressionParserErrorTest, IncorrectExpressionOperators) {
+    ExpressionParser Tree("1 - 3 _ 1 + 2");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+}
+
+TEST(ExpressionParserErrorTest, IncorrectParetheses) {
+    ExpressionParser Tree("(1 + 3) + 1)");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+}
+
+TEST(ExpressionParserErrorTest, IncorrectParetheses1) {
+    ExpressionParser Tree("((1 + 3) + 1");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+}
+
+TEST(ExpressionParserErrorTest, IncorrectParetheses2) {
+    ExpressionParser Tree("4 + (-1 + 1");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+}
+
+TEST(ExpressionParserErrorTest, IncorrectParetheses3) {
+    ExpressionParser Tree("4 + -1) + 1");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+}
+
+TEST(ExpressionParserErrorTest, IncorrectExpressionMixed) {
+    ExpressionParser Tree(" (4 + k _ 1");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+}
+
+TEST(ExpressionParserErrorTest, IncompletedExpression) {
+    ExpressionParser Tree(" (4 + 1 +");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression->GetStructure(), "Err");
+}
+
 
 ///////////////////////////////////////
 ////////ТЕСТЫ ДЛЯ КАЛЬКУЛЯТОРА/////////
