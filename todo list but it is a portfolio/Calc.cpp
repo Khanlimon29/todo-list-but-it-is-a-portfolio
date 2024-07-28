@@ -989,57 +989,83 @@ TEST(CalculatorTest, DeepNestedParentheses) {
     EXPECT_EQ(result, Tree->Calculate());
 }
 
-/*
 TEST(CalculatorTestForErrors, OpenedBrackets) {
-    bool Error = false;
     string Expression = "3 + 4 * ( 5 - 1";
-    string result = "err";
-    EXPECT_EQ(result, Calculator(Expression, Error));
-    Expression = "3 + 4 * 5 - 1)";
-    result = "err";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    ExpressionParser Tree(Expression);
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(ParseError::UNCLOSED_BRACKETS, Tree.getErrorCode());
+}
+
+TEST(CalculatorTestForErrors, OpenedBrackets1) {
+    string Expression = "3 + 4 * 5 - 1)";
+    ExpressionParser Tree(Expression);
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(ParseError::UNCLOSED_BRACKETS, Tree.getErrorCode());
+}
+
+TEST(CalculatorTestForErrors, OpenedBrackets2) {
+    string Expression = "3 + (-4 * 5 - 1";
+    ExpressionParser Tree(Expression);
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(ParseError::UNCLOSED_BRACKETS, Tree.getErrorCode());
 }
 
 TEST(CalculatorTestForErrors, InvalidChar) {
-    bool Error = false;
     string Expression = "1 _ 1";
-    string result = "err";
-    EXPECT_EQ(result, Calculator(Expression, Error));
-    Expression = "1 -_ 1";
-    result = "err";
-    EXPECT_EQ(result, Calculator(Expression, Error));
-    Expression = "1 + 1 + d";
-    result = "err";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    ExpressionParser Tree(Expression);
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(ParseError::INVALID_CHARACTERS, Tree.getErrorCode());
+}
+TEST(CalculatorTestForErrors, InvalidChar1) {
+    string Expression = "1 -_ 1";
+    ExpressionParser Tree(Expression);
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(ParseError::INVALID_CHARACTERS, Tree.getErrorCode());
+}
+TEST(CalculatorTestForErrors, InvalidChar2) {
+    string Expression = "1 + 1 + d";
+    ExpressionParser Tree(Expression);
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(ParseError::INVALID_CHARACTERS, Tree.getErrorCode());
 }
 
+
 TEST(CalculatorTestForErrors, DividedByZero) {
-    bool Error = false;
     string Expression = "1 / 0";
-    string result = "err";
-    EXPECT_EQ(result, Calculator(Expression, Error));
-    Expression = "1 / ((-5) * (-1) - 5)";
-    result = "err";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    ExpressionParser Tree(Expression);
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(ParseError::DIVISION_BY_ZERO, Tree.getErrorCode());
+}
+TEST(CalculatorTestForErrors, DividedByZero1) {
+    string Expression = "1 / ((-5) * (-1) - 5)";
+    ExpressionParser Tree(Expression);
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(ParseError::DIVISION_BY_ZERO, Tree.getErrorCode());
 }
 
 TEST(CalculatorTestForErrors, EmptyLine) {
-    bool Error = false;
     string Expression = " ";
-    string result = "err";
-    EXPECT_EQ(result, Calculator(Expression, Error));
-    Expression = "        ";
-    result = "err";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    ExpressionParser Tree(Expression);
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(ParseError::EMPTY, Tree.getErrorCode());
+}
+
+TEST(CalculatorTestForErrors, EmptyLine1) {
+    string Expression = "        ";
+    ExpressionParser Tree(Expression);
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(ParseError::EMPTY, Tree.getErrorCode());
 }
 
 TEST(CalculatorTestForErrors, IncompleteLine) {
-    bool Error = false;
     string Expression = "1 +";
-    string result = "err";
-    EXPECT_EQ(result, Calculator(Expression, Error));
-    Expression = "(3 + 4 * 2 / (1  5) * 2) + 10 / (2 + 3)";
-    result = "err";
-    EXPECT_EQ(result, Calculator(Expression, Error));
+    ExpressionParser Tree(Expression);
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(ParseError::SYNTAX_ERROR, Tree.getErrorCode());
 }
-*/
+TEST(CalculatorTestForErrors, IncompleteLine1) {
+    string Expression = "((3 + 4 * 2 / (1 - * 5) * 2) + 10 / 2 + 3)";
+    ExpressionParser Tree(Expression);
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(ParseError::SYNTAX_ERROR, Tree.getErrorCode());
+}
