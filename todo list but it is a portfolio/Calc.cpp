@@ -247,6 +247,7 @@ void CalculatorMain() {
 }*/
 
 enum class ParseError {
+    DIVISION_BY_ZERO,
     SYNTAX_ERROR,
     UNCLOSED_BRACKETS,
     INVALID_CHARACTERS,
@@ -257,7 +258,7 @@ enum class ParseError {
 class Operation {
 public:
     virtual double Calculate() const = 0;
-    virtual string GetStructure() const = 0;    // для тестирования
+    virtual string GetStructure() const = 0;    // для тестирования   
     virtual ~Operation() {}
 };
 
@@ -371,6 +372,10 @@ private:
     }
 
     unique_ptr<Operation> applyOperation(char op, unique_ptr<Operation> left, unique_ptr<Operation> right) {
+        if (op == '/' && right->Calculate() == 0) {
+            errorCode = ParseError::DIVISION_BY_ZERO;
+            return nullptr;
+        }
         switch (op) {
         case '+': return make_unique <Add> (left.release(), right.release());
         case '-': return make_unique <Subtract> (left.release(), right.release());
@@ -798,6 +803,13 @@ TEST(ExpressionParserErrorTest, IncorrectParetheses2) {
 
 TEST(ExpressionParserErrorTest, IncorrectParetheses3) {
     ExpressionParser Tree("4 + -1) + 1");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression, nullptr);
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::UNCLOSED_BRACKETS);
+}
+
+TEST(ExpressionParserErrorTest, IncorrectParetheses4) { // new edge case
+    ExpressionParser Tree("4 + (-1 + 1)");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression, nullptr);
     EXPECT_EQ(Tree.getErrorCode(), ParseError::UNCLOSED_BRACKETS);
