@@ -414,11 +414,22 @@ private:
         expression.erase(remove(expression.begin(), expression.end(), ' '), expression.end());
     }
 
+    bool isValidNonInteger(size_t index) {
+        return expression[index] == '.' && index + 1 < expression.length() && isdigit(expression[index + 1]);
+    }
+
+    bool isValidNegative(size_t index) {
+        return expression[index] == '-' && (index == 0 || expression[index - 1] == '(') && index + 1 < expression.length() && isdigit(expression[index + 1]);
+    }
+
     bool isNumberStart(size_t index) {
         if (index >= expression.length()) return false; // защита от вылета с index + 1
         if (isdigit(expression[index])) return true;
-        if (expression[index] == '.' && index + 1 < expression.length() && isdigit(expression[index + 1])) return true;
-        if (expression[index] == '-' && (index == 0 || expression[index - 1] == '(') && index + 1 < expression.length() && isdigit(expression[index + 1])) return true; // обработка отрицательных чисел одной строчкой :Oppenheimer:
+        if (isValidNonInteger(index)) return true;
+        if (isValidNegative(index)) {
+            parenthesesBalance++;
+            return true;
+        }
         return false;
     }
 
@@ -426,6 +437,9 @@ private:
         size_t length;
         double number = stod(expression.substr(index), &length);
         values.push(make_unique<Number>(number));
+        if ((expression[index + length] == ')' && isValidNegative(index)) || (index == 0 && isValidNegative(index))) {
+            parenthesesBalance--;
+        }
         index += length;
     }
 
@@ -739,7 +753,7 @@ TEST(ExpressionParserTest, MultipleParentheses) {
 }
 
 TEST(ExpressionParserTest, NegativeNumbersWithParentheses) {
-    ExpressionParser Tree("(-3 + 5) * (-2)");
+    ExpressionParser Tree("((-3) + 5) * (-2)");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression->GetStructure(), "Multiply(Add(Number(-3.000000), Number(5.000000)), Number(-2.000000))");
     EXPECT_EQ(Tree.getErrorCode(), ParseError::NONE);
@@ -809,7 +823,7 @@ TEST(ExpressionParserErrorTest, IncorrectParetheses3) {
 }
 
 TEST(ExpressionParserErrorTest, IncorrectParetheses4) { // new edge case
-    ExpressionParser Tree("4 + (-1 + 1)");
+    ExpressionParser Tree("456 + (-1215 + 16)");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression, nullptr);
     EXPECT_EQ(Tree.getErrorCode(), ParseError::UNCLOSED_BRACKETS);
@@ -850,7 +864,7 @@ TEST(CalculatorTest, RepeatedOperations) {
 }
 
 TEST(CalculatorTest, NegativeNumbers) {
-    string Expression = "(-5 + (-5)) * (-1)";
+    string Expression = "((-5) + (-5)) * (-1)";
     double result = 10;
     unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
     ASSERT_TRUE(Tree != nullptr);
@@ -922,7 +936,7 @@ TEST(CalculatorTest, MultipleNestedOperations) {
 }
 
 TEST(CalculatorTest, ZeroAndNegativeNumbers) {
-    string Expression = "0 * (-2 + 3) / 4";
+    string Expression = "0 * ((-2) + 3) / 4";
     double result = 0;
     unique_ptr<Operation> Tree = ExpressionParser(Expression).parse();
     ASSERT_TRUE(Tree != nullptr);
