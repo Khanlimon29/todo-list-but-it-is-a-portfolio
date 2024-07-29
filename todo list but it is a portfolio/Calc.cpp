@@ -514,6 +514,38 @@ private:
     }
 };
 
+void PrintError(ParseError error) {
+    SetColor(31);
+    switch (error) {
+    case ParseError::DIVISION_BY_ZERO: cout << "Ошибка: Деление на ноль!" << endl; break;
+    case ParseError::SYNTAX_ERROR: cout << "Ошибка: Неккоректное выражение!" << endl; break;
+    case ParseError::UNCLOSED_BRACKETS: cout << "Ошибка: Незакрытые скобки в выражении!" << endl; break;
+    case ParseError::INVALID_CHARACTERS: cout << "Ошибка: Некорректные символы в выражении!" << endl; break;
+    case ParseError::EMPTY: cout << "Ошибка: Пустое выражение!" << endl; break;
+    }
+    SetColor(0);
+}
+
+void CalculatorMain() {
+    string expression;
+    cout << "Отрицательные числа должны быть заключены в скобки (кроме начала выражения)\n";
+    cout << "Введите выражение: ";
+    getline(cin, expression);
+
+    ExpressionParser Tree(expression);
+    unique_ptr<Operation> operation = Tree.parse();
+
+    if (Tree.getErrorCode() != ParseError::NONE) {
+        PrintError(Tree.getErrorCode());
+    }
+    else {
+        cout << "Результат: " << operation->Calculate();
+    }
+
+	cout << "\nНажмите на любую кнопку для продолжения";
+	_getch();
+}
+
 ///////////////////////////////////////
 //////////ТЕСТЫ ДЛЯ ДЕРЕВЬЕВ///////////
 ///////////////////////////////////////
@@ -824,6 +856,13 @@ TEST(ExpressionParserErrorTest, IncorrectParetheses3) {
 
 TEST(ExpressionParserErrorTest, IncorrectParetheses4) { // new edge case
     ExpressionParser Tree("456 + (-1215 + 16)");
+    unique_ptr<Operation> treeExpression = Tree.parse();
+    EXPECT_EQ(treeExpression, nullptr);
+    EXPECT_EQ(Tree.getErrorCode(), ParseError::UNCLOSED_BRACKETS);
+}
+
+TEST(ExpressionParserErrorTest, IncorrectParetheses5) { // new edge case...
+    ExpressionParser Tree("14 + 56) * (100 - 86");
     unique_ptr<Operation> treeExpression = Tree.parse();
     EXPECT_EQ(treeExpression, nullptr);
     EXPECT_EQ(Tree.getErrorCode(), ParseError::UNCLOSED_BRACKETS);
