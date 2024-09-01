@@ -88,7 +88,7 @@ void Percentage() {
     int total_days = TotalDaysInSemester();
     int days_passed = total_days - DaysUntilEndOfSemester();
     float done_percentage = (static_cast<float>(days_passed) / total_days) * 100;
-
+    if (done_percentage > 100) done_percentage = 100; // можно было чделать через clamp, но я не смог его подключить)
     int bar_width = 50;
     int progress = bar_width * done_percentage / 100;
 
@@ -116,8 +116,8 @@ void WeekOfEducation() {
     Percentage();
     cout << "Текущая дата: " << setfill('0') << setw(2) << ltm->tm_mday << "." << setw(2) << 1 + ltm->tm_mon << "." << setw(4) << 1900 + ltm->tm_year;
     cout << "\nНомер учебной недели: " << setfill('0') << setw(2) << academic_week;
-    cout << "\nДо конца семестра осталось " << TillEnd << " ";
     if (TillEnd > 0) {
+        cout << "\nДо конца семестра осталось " << TillEnd << " ";
         if (TillEnd == 1 || (TillEnd > 20 && TillEnd % 10 == 1)) {
             cout << "день ";
         }
@@ -127,6 +127,9 @@ void WeekOfEducation() {
         else {
             cout << "дней ";
         }
+    }
+    else {
+        cout << "\nСеместр окончен";
     }
     _getch();
 }

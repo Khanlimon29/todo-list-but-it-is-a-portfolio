@@ -2,6 +2,6 @@
 #ifndef CALC_H
 #define CALC_H
 
-int Calculator();
+void Calculator();
 
 #endif

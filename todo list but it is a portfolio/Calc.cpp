@@ -5,274 +5,188 @@
 #include <conio.h>
 #include "setcolor.h"
 #include <iomanip>
+#include <algorithm>
 
 using namespace std;
 
-int Priority(char op) {
-    if (op == '+' || op == '-') return 1;
-    if (op == '*' || op == '/') return 2;
-    return 0;
+enum ErrorCode { // список ошибок
+    NO_ERROR,
+    DIVISION_BY_ZERO,
+    SYNTAX_ERROR,
+    UNCLOSED_BRACKETS,
+    INVALID_CHARACTERS,
+    NOT_FULL,
+    EMPTY
+};
+
+void PrintError(ErrorCode error) {
+    SetColor(31);
+    switch (error) {
+    case DIVISION_BY_ZERO: cout << "Ошибка: Деление на ноль!" << endl; break;
+    case SYNTAX_ERROR: cout << "Ошибка: Синтаксическая ошибка!" << endl; break;
+    case UNCLOSED_BRACKETS: cout << "Ошибка: Незакрытые скобки в выражении!" << endl; break;
+    case INVALID_CHARACTERS: cout << "Ошибка: Некорректные символы в выражении!" << endl; break;
+    case NOT_FULL: cout << "Ошибка: Незавершенное выражение!" << endl; break;
+    case EMPTY: cout << "Ошибка: Пустое выражение!" << endl; break;
+    default: cout << "Ошибка: Некорректное выражение!" << endl; break;
+    }
+    SetColor(0);
+
+    cout << "\nНажмите на любую кнопку для продолжения";
+    _getch();
 }
 
-long double ApplyOperation(long double Operand1, long double Operand2, char Op, bool& error) {
-    switch (Op) {
-    case '+': return Operand1 + Operand2;
-    case '-': return Operand1 - Operand2;
-    case '*': return Operand1 * Operand2;
+int Priority(char op) {
+    return (op == '+' || op == '-') ? 1 : (op == '*' || op == '/') ? 2 : 0;
+}
+
+long double ApplyOperation(long double operand1, long double operand2, char op, ErrorCode& error) {
+    switch (op) {
+    case '+': return operand1 + operand2;
+    case '-': return operand1 - operand2;
+    case '*': return operand1 * operand2;
     case '/':
-        if (Operand2 == 0) {
-            error = true;
+        if (operand2 == 0) {
+            error = DIVISION_BY_ZERO;
             return 0;
         }
-        return Operand1 / Operand2;
+        return operand1 / operand2;
     default:
-        error = true;
+        error = SYNTAX_ERROR;
         return 0;
     }
 }
 
-long double EvaluateExpression(const string& Expression, bool& error) {
-    stack<long double> Values;
-    stack<char> Operators;
+bool IsDigitOrDot(char ch) {
+    return isdigit(ch) || ch == '.';
+}
+
+bool IsValidChar(char ch) {
+    return isdigit(ch) || ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '(' || ch == ')' || ch == '.' || ch == ' ';
+}
+
+long double EvaluateExpression(const string& expression, ErrorCode& error) {
+    stack<long double> values;
+    stack<char> operators;
     bool negative = false;
 
-    for (size_t i = 0; i < Expression.length(); ++i) {
-        if (Expression[i] == ' ')
-            continue;
+    auto applyTopOperation = [&](stack<long double>& values, stack<char>& operators, ErrorCode& error) {
+        if (values.size() < 2 || operators.empty()) {
+            error = SYNTAX_ERROR;
+            return;
+        }
+        long double operand2 = values.top(); values.pop();
+        long double operand1 = values.top(); values.pop();
+        char op = operators.top(); operators.pop();
+        values.push(ApplyOperation(operand1, operand2, op, error));
+    };
 
-        if (isdigit(Expression[i]) || Expression[i] == '.' || (Expression[i] == '-' && (i == 0 || Expression[i - 1] == '('))) {
-            long double Val = 0;
-            long double Fraction = 0.1;
-            bool DecimalPointFound = false;
+    for (size_t i = 0; i < expression.length(); ++i) {
+        if (isspace(expression[i])) continue;
 
-            if (Expression[i] == '-') {
+        if (IsDigitOrDot(expression[i]) || (expression[i] == '-' && (i == 0 || expression[i - 1] == '('))) {
+            long double val = 0;
+            long double fraction = 0.1;
+            bool decimalPointFound = false;
+
+            if (expression[i] == '-') {
                 negative = true;
                 continue;
             }
 
-            while (i < Expression.length() && (isdigit(Expression[i]) || Expression[i] == '.')) {
-                if (Expression[i] != '.') {
-                    if (!DecimalPointFound) {
-                        Val = Val * 10 + (Expression[i] - '0');
+            while (i < expression.length() && IsDigitOrDot(expression[i])) {
+                if (expression[i] != '.') {
+                    if (!decimalPointFound) {
+                        val = val * 10 + (expression[i] - '0');
                     }
                     else {
-                        Val += (Expression[i] - '0') * Fraction;
-                        Fraction *= 0.1;
+                        val += (expression[i] - '0') * fraction;
+                        fraction *= 0.1;
                     }
                 }
                 else {
-                    DecimalPointFound = true;
+                    decimalPointFound = true;
                 }
                 ++i;
             }
             --i;
-            Values.push(negative ? -Val : Val);
+            values.push(negative ? -val : val);
             negative = false;
         }
-        else if (Expression[i] == '(') {
-            Operators.push(Expression[i]);
+        else if (expression[i] == '(') {
+            operators.push(expression[i]);
         }
-        else if (Expression[i] == ')') {
-            while (!Operators.empty() && Operators.top() != '(') {
-                long double Operand2, Operand1;
-                char Op;
-                if (!Values.empty()) {
-                    Operand2 = Values.top();
-                    Values.pop();
-                }
-                else {
-                    error = true;
-                    return 0;
-                }
-                if (!Values.empty()) {
-                    Operand1 = Values.top();
-                    Values.pop();
-                }
-                else {
-                    error = true;
-                    return 0;
-                }
-                if (!Operators.empty()) {
-                    Op = Operators.top();
-                    Operators.pop();
-                }
-                else {
-                    error = true;
-                    return 0;
-                }
-
-                Values.push(ApplyOperation(Operand1, Operand2, Op, error));
-                if (error) return 0;
+        else if (expression[i] == ')') {
+            while (!operators.empty() && operators.top() != '(') {
+                applyTopOperation(values, operators, error);
+                if (error != NO_ERROR) return 0;
             }
-            if (!Operators.empty()) Operators.pop();
+            if (!operators.empty()) operators.pop();
         }
         else {
-            while (!Operators.empty() && Priority(Operators.top()) >= Priority(Expression[i])) {
-                long double Operand2, Operand1;
-                char Op;
-                if (!Values.empty()) {
-                    Operand2 = Values.top();
-                    Values.pop();
-                }
-                else {
-                    error = true;
-                    return 0;
-                }
-                if (!Values.empty()) {
-                    Operand1 = Values.top();
-                    Values.pop();
-                }
-                else {
-                    error = true;
-                    return 0;
-                }
-                if (!Operators.empty()) {
-                    Op = Operators.top();
-                    Operators.pop();
-                }
-                else {
-                    error = true;
-                    return 0;
-                }
-
-                Values.push(ApplyOperation(Operand1, Operand2, Op, error));
-                if (error) return 0;
+            while (!operators.empty() && Priority(operators.top()) >= Priority(expression[i])) {
+                applyTopOperation(values, operators, error);
+                if (error != NO_ERROR) return 0;
             }
-            Operators.push(Expression[i]);
+            operators.push(expression[i]);
         }
     }
 
-    while (!Operators.empty()) {
-        long double Operand2, Operand1;
-        char Op;
-        if (!Values.empty()) {
-            Operand2 = Values.top();
-            Values.pop();
-        }
-        else {
-            error = true;
-            return 0;
-        }
-        if (!Values.empty()) {
-            Operand1 = Values.top();
-            Values.pop();
-        }
-        else {
-            error = true;
-            return 0;
-        }
-        if (!Operators.empty()) {
-            Op = Operators.top();
-            Operators.pop();
-        }
-        else {
-            error = true;
-            return 0;
-        }
-
-        Values.push(ApplyOperation(Operand1, Operand2, Op, error));
-        if (error) return 0;
+    while (!operators.empty()) {
+        applyTopOperation(values, operators, error);
+        if (error != NO_ERROR) return 0;
     }
 
-    if (Values.size() != 1) {
-        error = true;
+    if (values.size() != 1) {
+        error = SYNTAX_ERROR;
         return 0;
     }
 
-    return Values.top();
+    return values.top();
 }
 
-bool IsOnlySpaces(const string& str) {
-    for (char ch : str) {
-        if (!isspace(ch)) {
-            return false;
-        }
-    }
-    return true;
-}
-
-int Calculator() {
-    string Expression;
-    bool error = false;
+void Calculator() {
+    string expression;
+    ErrorCode error = NO_ERROR;
 
     cout << "Отрицательные числа должны быть заключены в скобки (кроме начала выражения)\n";
     cout << "Введите выражение: ";
-    getline(cin, Expression);
+    getline(cin, expression);
 
-    if (Expression.empty() || IsOnlySpaces(Expression)) {
-        SetColor(31);
-        cout << "Пустое выражение!" << endl;
-        SetColor(0);
-        cout << "\nНажмите на любую кнопку для продолжения";
-        _getch();
-        return 1;
+    expression.erase(remove(expression.begin(), expression.end(), ' '), expression.end());
+
+    if (expression.empty()) {
+        PrintError(EMPTY);
+        return;
     }
 
-    while (!Expression.empty() && Expression.back() == ' ')
-        Expression.pop_back();
-
-    if (!isdigit(Expression.back()) && Expression.back() != ')') {
-        SetColor(31);
-        cout << "Незавершенное выражение!" << endl;
-        SetColor(0);
-        cout << "\nНажмите на любую кнопку для продолжения";
-        _getch();
-        return 1;
+    if (!isdigit(expression.back()) && expression.back() != ')') {
+        PrintError(NOT_FULL);
+        return;
     }
 
-    int OpenBrackets = 0;
-    int ClosedBrackets = 0;
+    int openBrackets = count(expression.begin(), expression.end(), '(');
+    int closedBrackets = count(expression.begin(), expression.end(), ')');
 
-    for (char Symbol : Expression) {
-        if (Symbol == '(') {
-            OpenBrackets++;
-        }
-        else if (Symbol == ')') {
-            ClosedBrackets++;
-        }
-
-        if (!isdigit(Symbol) && Symbol != '+' && Symbol != '-' && Symbol != '*' && Symbol != '/' && Symbol != '(' && Symbol != ')' && Symbol != '.' && Symbol != ' ') {
-            SetColor(31);
-            cout << "Некорректные символы в выражении" << endl;
-            SetColor(0);
-            cout << "\nНажмите на любую кнопку для продолжения";
-            _getch();
-            return 1;
-        }
+    if (openBrackets != closedBrackets) {
+        PrintError(UNCLOSED_BRACKETS);
+        return;
     }
 
-    if (OpenBrackets != ClosedBrackets) {
-        SetColor(31);
-        cout << "Незакрытые скобки в выражении!" << endl;
-        SetColor(0);
-        cout << "\nНажмите на любую кнопку для продолжения";
-        _getch();
-        return 1;
+    if (any_of(expression.begin(), expression.end(), [](char ch) { return !IsValidChar(ch); })) {
+        PrintError(INVALID_CHARACTERS);
+        return;
     }
 
-    if (error) {
-        SetColor(31);
-        cout << "Некорректное выражение!" << endl;
-        SetColor(0);
-        cout << "\nНажмите на любую кнопку для продолжения";
-        _getch();
-        return 1;
+    long double result = EvaluateExpression(expression, error);
+    if (error != NO_ERROR) {
+        PrintError(error);
+        return;
     }
-    else {
-        long double result = EvaluateExpression(Expression, error);
-        if (error) {
-            SetColor(31);
-            cout << "Некорректное выражение!" << endl;
-            SetColor(0);
-            cout << "\nНажмите на любую кнопку для продолжения";
-            _getch();
-            return 1;
-        }
-        int precision = (result == static_cast<long long>(result)) ? 0 : 6;
-        cout << "Результат: " << fixed << setprecision(precision) << result << endl;
-    }
+
+    int precision = (result == static_cast<long long>(result)) ? 0 : 6;
+    cout << "Результат: " << fixed << setprecision(precision) << result << endl;
 
     cout << "\nНажмите на любую кнопку для продолжения";
     _getch();
-    return 0;
 }

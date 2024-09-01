@@ -3,6 +3,6 @@
 #define TIC_TAC_TOE_H
 
 
-int tic_tac();
+void tic_tac();
 
 #endif
