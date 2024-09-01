@@ -4,188 +4,304 @@
 #include <string>
 #include <conio.h>
 #include "setcolor.h"
-#include <iomanip>
-#include <algorithm>
 
 using namespace std;
 
-enum ErrorCode { // список ошибок
-    NO_ERROR,
+enum class ParseError {
     DIVISION_BY_ZERO,
     SYNTAX_ERROR,
     UNCLOSED_BRACKETS,
     INVALID_CHARACTERS,
-    NOT_FULL,
-    EMPTY
+    EMPTY,
+    NONE
 };
 
-void PrintError(ErrorCode error) {
-    SetColor(31);
-    switch (error) {
-    case DIVISION_BY_ZERO: cout << "Ошибка: Деление на ноль!" << endl; break;
-    case SYNTAX_ERROR: cout << "Ошибка: Синтаксическая ошибка!" << endl; break;
-    case UNCLOSED_BRACKETS: cout << "Ошибка: Незакрытые скобки в выражении!" << endl; break;
-    case INVALID_CHARACTERS: cout << "Ошибка: Некорректные символы в выражении!" << endl; break;
-    case NOT_FULL: cout << "Ошибка: Незавершенное выражение!" << endl; break;
-    case EMPTY: cout << "Ошибка: Пустое выражение!" << endl; break;
-    default: cout << "Ошибка: Некорректное выражение!" << endl; break;
+class Operation {
+public:
+    virtual double Calculate() const = 0;
+    virtual string GetStructure() const = 0;    // для тестирования   
+    virtual ~Operation() {}
+};
+
+class Number : public Operation {
+public:
+    Number(double _value) : value(_value) {}
+    double Calculate() const override {
+        return value;
     }
-    SetColor(0);
+    string GetStructure() const override {
+        return "Number(" + to_string(value) + ")";   // для тестирования
+    }
+private:
+    double value;
+};
 
-    cout << "\nНажмите на любую кнопку для продолжения";
-    _getch();
-}
+class Add : public Operation {
+public:
+    Add(Operation* _left, Operation* _right) : left(_left), right(_right) {}
+    double Calculate() const override {
+        return left->Calculate() + right->Calculate();
+    }
+    string GetStructure() const override {
+        return "Add(" + left->GetStructure() + ", " + right->GetStructure() + ")";   // для тестирования
+    }
+private:
+    unique_ptr<Operation> left;
+    unique_ptr<Operation> right;
+};
 
-int Priority(char op) {
-    return (op == '+' || op == '-') ? 1 : (op == '*' || op == '/') ? 2 : 0;
-}
+class Subtract : public Operation {
+public:
+    Subtract(Operation* _left, Operation* _right) : left(_left), right(_right) {}
+    double Calculate() const override {
+        return left->Calculate() - right->Calculate();
+    }
+    string GetStructure() const override {
+        return "Subtract(" + left->GetStructure() + ", " + right->GetStructure() + ")";   // для тестирования
+    }
+private:
+    unique_ptr<Operation> left;
+    unique_ptr<Operation> right;
+};
 
-long double ApplyOperation(long double operand1, long double operand2, char op, ErrorCode& error) {
-    switch (op) {
-    case '+': return operand1 + operand2;
-    case '-': return operand1 - operand2;
-    case '*': return operand1 * operand2;
-    case '/':
-        if (operand2 == 0) {
-            error = DIVISION_BY_ZERO;
-            return 0;
+class Multiply : public Operation {
+public:
+    Multiply(Operation* _left, Operation* _right) : left(_left), right(_right) {}
+    double Calculate() const override {
+        return left->Calculate() * right->Calculate();
+    }
+    string GetStructure() const override {
+        return "Multiply(" + left->GetStructure() + ", " + right->GetStructure() + ")";   // для тестирования
+    }
+private:
+    unique_ptr<Operation> left;
+    unique_ptr<Operation> right;
+};
+
+class Divide : public Operation {
+public:
+    Divide(Operation* _left, Operation* _right) : left(_left), right(_right) {}
+    double Calculate() const override {
+        return left->Calculate() / right->Calculate();
+    }
+    string GetStructure() const override {
+        return "Divide(" + left->GetStructure() + ", " + right->GetStructure() + ")";   // для тестирования
+    }
+private:
+    unique_ptr<Operation> left;
+    unique_ptr<Operation> right;
+};
+
+class ExpressionParser {
+public:
+    ExpressionParser(const string& expr) : expression(expr), errorCode(ParseError::NONE) {
+        removeSpaces();
+    }
+
+    unique_ptr<Operation> parse() {
+        if (expression.empty()) {
+            errorCode = ParseError::EMPTY;
+            return nullptr;
         }
-        return operand1 / operand2;
-    default:
-        error = SYNTAX_ERROR;
+        tokenize();
+        if (errorCode != ParseError::NONE) {
+            return nullptr;
+        }
+        processOperators();
+        return move(values.top());
+    }
+
+    ParseError getErrorCode() const {
+        return errorCode;
+    }
+
+private:
+    string expression;
+    stack<unique_ptr<Operation>> values;
+    stack<char> operators;
+    ParseError errorCode;
+    int parenthesesBalance = 0;
+
+    bool isOperator(char c) {
+        return c == '+' || c == '-' || c == '*' || c == '/';
+    }
+
+    int getPrecedence(char op) {
+        if (op == '+' || op == '-') return 1;
+        if (op == '*' || op == '/') return 2;
         return 0;
     }
-}
 
-bool IsDigitOrDot(char ch) {
-    return isdigit(ch) || ch == '.';
-}
-
-bool IsValidChar(char ch) {
-    return isdigit(ch) || ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '(' || ch == ')' || ch == '.' || ch == ' ';
-}
-
-long double EvaluateExpression(const string& expression, ErrorCode& error) {
-    stack<long double> values;
-    stack<char> operators;
-    bool negative = false;
-
-    auto applyTopOperation = [&](stack<long double>& values, stack<char>& operators, ErrorCode& error) {
-        if (values.size() < 2 || operators.empty()) {
-            error = SYNTAX_ERROR;
-            return;
+    unique_ptr<Operation> applyOperation(char op, unique_ptr<Operation> left, unique_ptr<Operation> right) {
+        if (op == '/' && right->Calculate() == 0) {
+            errorCode = ParseError::DIVISION_BY_ZERO;
+            return nullptr;
         }
-        long double operand2 = values.top(); values.pop();
-        long double operand1 = values.top(); values.pop();
-        char op = operators.top(); operators.pop();
-        values.push(ApplyOperation(operand1, operand2, op, error));
-    };
-
-    for (size_t i = 0; i < expression.length(); ++i) {
-        if (isspace(expression[i])) continue;
-
-        if (IsDigitOrDot(expression[i]) || (expression[i] == '-' && (i == 0 || expression[i - 1] == '('))) {
-            long double val = 0;
-            long double fraction = 0.1;
-            bool decimalPointFound = false;
-
-            if (expression[i] == '-') {
-                negative = true;
-                continue;
-            }
-
-            while (i < expression.length() && IsDigitOrDot(expression[i])) {
-                if (expression[i] != '.') {
-                    if (!decimalPointFound) {
-                        val = val * 10 + (expression[i] - '0');
-                    }
-                    else {
-                        val += (expression[i] - '0') * fraction;
-                        fraction *= 0.1;
-                    }
-                }
-                else {
-                    decimalPointFound = true;
-                }
-                ++i;
-            }
-            --i;
-            values.push(negative ? -val : val);
-            negative = false;
+        switch (op) {
+        case '+': return make_unique <Add>(left.release(), right.release());
+        case '-': return make_unique <Subtract>(left.release(), right.release());
+        case '*': return make_unique <Multiply>(left.release(), right.release());
+        case '/': return make_unique <Divide>(left.release(), right.release());
+        default: return nullptr;
         }
-        else if (expression[i] == '(') {
-            operators.push(expression[i]);
+    }
+
+    void processOperators() {
+        while (!operators.empty()) {
+            applyTopOperator();
         }
-        else if (expression[i] == ')') {
-            while (!operators.empty() && operators.top() != '(') {
-                applyTopOperation(values, operators, error);
-                if (error != NO_ERROR) return 0;
-            }
-            if (!operators.empty()) operators.pop();
+    }
+
+    void processCurrentOperator(char op) {
+        while (!operators.empty() && getPrecedence(operators.top()) >= getPrecedence(op)) {
+            applyTopOperator();
+        }
+        operators.push(op);
+    }
+
+    void applyTopOperator() {
+        char op = operators.top();
+        operators.pop();
+
+        unique_ptr<Operation> right = move(values.top());
+        values.pop();
+        unique_ptr<Operation> left = move(values.top());
+        values.pop();
+
+        values.push(applyOperation(op, move(left), move(right)));
+    }
+
+    void removeSpaces() {
+        expression.erase(remove(expression.begin(), expression.end(), ' '), expression.end());
+    }
+
+    bool isValidNonInteger(size_t index) {
+        return expression[index] == '.' && index + 1 < expression.length() && isdigit(expression[index + 1]);
+    }
+
+    bool isValidNegative(size_t index) {
+        return expression[index] == '-' && (index == 0 || expression[index - 1] == '(') && index + 1 < expression.length() && isdigit(expression[index + 1]);
+    }
+
+    bool isNumberStart(size_t index) {
+        if (index >= expression.length()) return false; // защита от вылета с index + 1
+        if (isdigit(expression[index])) return true;
+        if (isValidNonInteger(index)) return true;
+        if (isValidNegative(index)) {
+            parenthesesBalance++;
+            return true;
+        }
+        return false;
+    }
+
+    void handleNumber(size_t& index) {
+        size_t length;
+        double number = stod(expression.substr(index), &length);
+        values.push(make_unique<Number>(number));
+        if ((expression[index + length] == ')' && isValidNegative(index)) || (index == 0 && isValidNegative(index))) {
+            parenthesesBalance--;
+        }
+        index += length;
+    }
+
+    bool isOperatorAtStartOfExpression(size_t index) {
+        return values.empty() && expression[index] != '-';
+    }
+
+    bool isInvalidOperatorPrecedence(size_t& index) {
+        return !values.empty() && !operators.empty() && isOperator(expression[index - 1]) && expression[index - 1] != '(';
+    }
+
+    void handleOperator(size_t& index) {
+        if (isOperatorAtStartOfExpression(index) || isInvalidOperatorPrecedence(index)) {
+            errorCode = ParseError::SYNTAX_ERROR;
         }
         else {
-            while (!operators.empty() && Priority(operators.top()) >= Priority(expression[i])) {
-                applyTopOperation(values, operators, error);
-                if (error != NO_ERROR) return 0;
+            processCurrentOperator(expression[index]);
+        }
+        index++;
+    }
+
+    void handleParentheses(size_t& index) {
+        if (expression[index] == '(') {
+            operators.push(expression[index]);
+            parenthesesBalance++;
+        }
+        else if (expression[index] == ')') {
+            parenthesesBalance--;
+            while (!operators.empty() && operators.top() != '(') {
+                applyTopOperator();
             }
-            operators.push(expression[i]);
+            if (!(operators.empty() || parenthesesBalance < 0)) {
+                operators.pop();
+            }
+        }
+        index++;
+    }
+
+    bool isParentheses(size_t& index) {
+        return expression[index] == '(' || expression[index] == ')';
+    }
+
+    bool isValidChar(char index) {
+        return isdigit(index) || index == '+' || index == '-' || index == '*' || index == '/' || index == '(' || index == ')' || index == '.';
+    }
+
+    void tokenize() {
+        for (size_t index = 0; index < expression.length();) {
+            if (!isValidChar(expression[index])) {
+                errorCode = ParseError::INVALID_CHARACTERS;
+                return;
+            }
+            else if (isParentheses(index)) {
+                handleParentheses(index);
+            }
+            else if (isNumberStart(index)) {
+                handleNumber(index);
+            }
+            else if (isOperator(expression[index])) {
+                handleOperator(index);
+            }
+        }
+        if (parenthesesBalance != 0) {
+            errorCode = ParseError::UNCLOSED_BRACKETS;
+            return;
+        }
+
+        if (isOperator(expression.back())) {
+            errorCode = ParseError::SYNTAX_ERROR;
+            return;
         }
     }
+};
 
-    while (!operators.empty()) {
-        applyTopOperation(values, operators, error);
-        if (error != NO_ERROR) return 0;
+void PrintError(ParseError error) {
+    SetColor(31);
+    switch (error) {
+    case ParseError::DIVISION_BY_ZERO: cout << "Ошибка: Деление на ноль!" << endl; break;
+    case ParseError::SYNTAX_ERROR: cout << "Ошибка: Неккоректное выражение!" << endl; break;
+    case ParseError::UNCLOSED_BRACKETS: cout << "Ошибка: Незакрытые скобки в выражении!" << endl; break;
+    case ParseError::INVALID_CHARACTERS: cout << "Ошибка: Некорректные символы в выражении!" << endl; break;
+    case ParseError::EMPTY: cout << "Ошибка: Пустое выражение!" << endl; break;
     }
-
-    if (values.size() != 1) {
-        error = SYNTAX_ERROR;
-        return 0;
-    }
-
-    return values.top();
+    SetColor(0);
 }
 
-void Calculator() {
+void CalculatorMain() {
     string expression;
-    ErrorCode error = NO_ERROR;
-
     cout << "Отрицательные числа должны быть заключены в скобки (кроме начала выражения)\n";
     cout << "Введите выражение: ";
     getline(cin, expression);
 
-    expression.erase(remove(expression.begin(), expression.end(), ' '), expression.end());
+    ExpressionParser Tree(expression);
+    unique_ptr<Operation> operation = Tree.parse();
 
-    if (expression.empty()) {
-        PrintError(EMPTY);
-        return;
+    if (Tree.getErrorCode() != ParseError::NONE) {
+        PrintError(Tree.getErrorCode());
     }
-
-    if (!isdigit(expression.back()) && expression.back() != ')') {
-        PrintError(NOT_FULL);
-        return;
+    else {
+        cout << "Результат: " << operation->Calculate();
     }
-
-    int openBrackets = count(expression.begin(), expression.end(), '(');
-    int closedBrackets = count(expression.begin(), expression.end(), ')');
-
-    if (openBrackets != closedBrackets) {
-        PrintError(UNCLOSED_BRACKETS);
-        return;
-    }
-
-    if (any_of(expression.begin(), expression.end(), [](char ch) { return !IsValidChar(ch); })) {
-        PrintError(INVALID_CHARACTERS);
-        return;
-    }
-
-    long double result = EvaluateExpression(expression, error);
-    if (error != NO_ERROR) {
-        PrintError(error);
-        return;
-    }
-
-    int precision = (result == static_cast<long long>(result)) ? 0 : 6;
-    cout << "Результат: " << fixed << setprecision(precision) << result << endl;
 
     cout << "\nНажмите на любую кнопку для продолжения";
     _getch();
