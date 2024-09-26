@@ -1,5 +1,5 @@
 #include "tic_tac_toe.h"
-#include "gotoxy.h"
+#include "CLI_QOL.h"
 #include <iostream>
 #include <conio.h>
 #include <vector>

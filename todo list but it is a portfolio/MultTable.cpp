@@ -4,7 +4,7 @@
 #include "RandNumb.h"
 #include <chrono>
 #include <iomanip>
-#include "setcolor.h"
+#include "CLI_QOL.h"
 using namespace std;
 
 void TableTrainer() {

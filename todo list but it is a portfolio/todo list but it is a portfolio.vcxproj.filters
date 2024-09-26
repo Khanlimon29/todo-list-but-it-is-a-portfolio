@@ -54,9 +54,6 @@
     <ClCompile Include="MultTable.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
-    <ClCompile Include="setcolor.cpp">
-      <Filter>Resource Files</Filter>
-    </ClCompile>
     <ClCompile Include="Sorts.cpp">
       <Filter>Resource Files</Filter>
     </ClCompile>
@@ -104,16 +101,13 @@
     <ClInclude Include="QueueSim.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="gotoxy.h">
+    <ClInclude Include="CLI_QOL.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ScreenSaver.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MultTable.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="setcolor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Sorts.h">

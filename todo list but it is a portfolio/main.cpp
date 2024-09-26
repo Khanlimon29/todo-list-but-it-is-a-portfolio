@@ -6,7 +6,6 @@
 #include <stack>
 #include <conio.h>
 #include <sstream>
-#include "gotoxy.h"
 #include "Ascii_Finder.h"
 #include "Calc.h"
 #include "tic_tac_toe.h"
@@ -18,13 +17,13 @@
 #include "QueueSim.h"
 #include "ScreenSaver.h"
 #include "MultTable.h"
-#include "setcolor.h"
 #include "Sorts.h"
 #include "Date.h"
 #include "Converter.h"
 #include "CsvPars.h"
 #include "WeekOfEducation.h"
 #include "StringFinder.h"
+#include "CLI_QOL.h"
 
 using namespace std;
 

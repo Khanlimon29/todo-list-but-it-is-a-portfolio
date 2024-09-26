@@ -3,7 +3,7 @@
 #include <stack>
 #include <string>
 #include <conio.h>
-#include "setcolor.h"
+#include "CLI_QOL.h"
 
 using namespace std;
 

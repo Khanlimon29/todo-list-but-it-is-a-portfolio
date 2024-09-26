@@ -3,8 +3,7 @@
 #include <conio.h>
 #include <ctime>
 #include <iomanip>
-#include "gotoxy.h"
-#include "setcolor.h"
+#include "CLI_QOL.h"
 
 using namespace std;
 

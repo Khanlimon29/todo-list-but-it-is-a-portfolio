@@ -149,7 +149,6 @@
     <ClCompile Include="RandNumb.cpp" />
     <ClCompile Include="RandomNumberGame.cpp" />
     <ClCompile Include="ScreenSaver.cpp" />
-    <ClCompile Include="setcolor.cpp" />
     <ClCompile Include="Sorts.cpp" />
     <ClCompile Include="StackSim.cpp" />
     <ClCompile Include="StringFinder.cpp" />
@@ -166,7 +165,7 @@
     <ClInclude Include="Converter.h" />
     <ClInclude Include="CsvPars.h" />
     <ClInclude Include="Date.h" />
-    <ClInclude Include="gotoxy.h" />
+    <ClInclude Include="CLI_QOL.h" />
     <ClInclude Include="MultTable.h" />
     <ClInclude Include="PasswordGen.h" />
     <ClInclude Include="PrimeNumb.h" />
@@ -174,7 +173,6 @@
     <ClInclude Include="RandNumb.h" />
     <ClInclude Include="RandomNumberGame.h" />
     <ClInclude Include="ScreenSaver.h" />
-    <ClInclude Include="setcolor.h" />
     <ClInclude Include="Sorts.h" />
     <ClInclude Include="StackSim.h" />
     <ClInclude Include="StringFinder.h" />

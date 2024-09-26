@@ -1,7 +1,7 @@
 #include "ScreenSaver.h"
 #include <iostream>
 #include <conio.h>
-#include "gotoxy.h"
+#include "CLI_QOL.h"
 #include "RandNumb.h"
 #include <windows.h>
 

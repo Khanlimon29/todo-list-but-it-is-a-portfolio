@@ -3,7 +3,7 @@
 #include <map>
 #include <iomanip>
 #include <vector>
-#include "gotoxy.h"
+#include "CLI_QOL.h"
 
 using namespace std;
 

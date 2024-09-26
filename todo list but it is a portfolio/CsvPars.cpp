@@ -4,7 +4,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
-#include "gotoxy.h"
+#include "CLI_QOL.h"
 
 using namespace std;
 
