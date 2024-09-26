@@ -123,22 +123,22 @@ private:
         switch (currOpt) {
             case 0: cout << "Вся программа является списком задач"; _getch(); break;
             case 1: ASCIIfinder(); break;
-            case 2: CalculatorMain(); break;
-            case 3: tic_tac(); break;
-            case 4: RandomNumber(); break;
-            case 5: Generator(); break;
-            case 7: RandomNumberGame(); break;
-            case 8: Saver(); break;
-            case 9: StackSimulator(); break;
-            case 10: QueueSimulator(); break;
-            case 12: TableTrainer(); break;
-            case 14: Finder(); break;
-            case 15: Converter(); break;
-            case 16: StringFinder(); break;
-            case 19: DateFinder(); break;
-            case 20: CsvParser(); break;
-            case 24: Sorts(); break;
-            case 29: WeekOfEducation(); break;
+            case 2: Saver(); break;
+            case 4: Finder(); break;
+            case 5: StringFinder(); break;
+            case 6: Converter(); break;
+            case 7: CalculatorMain(); break;
+            case 10: RandomNumber(); break;
+            case 11: Generator(); break;
+            case 12: StackSimulator(); break;
+            case 13: QueueSimulator(); break;
+            case 15: Sorts(); break;
+            case 17: CsvParser(); break;
+            case 19: RandomNumberGame(); break;
+            case 20: tic_tac(); break;
+            case 24: TableTrainer(); break;
+            case 27: DateFinder(); break;
+            case 28: WeekOfEducation(); break;
         }
         DrawMenu();
     }
