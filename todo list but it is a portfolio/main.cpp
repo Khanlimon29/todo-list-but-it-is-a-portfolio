@@ -1,4 +1,5 @@
 //TODO: Поддержка киррилицы, у пользователя выводятся символы явно не из кириллицы лол
+//TODO: Правильная структура кода, разбитие на функции
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -24,6 +25,7 @@
 #include "WeekOfEducation.h"
 #include "StringFinder.h"
 #include "CLI_QOL.h"
+#include "ClipHelper.h"
 
 using namespace std;
 
@@ -129,15 +131,17 @@ private:
             case 7: CalculatorMain(); break;
             case 10: RandomNumber(); break;
             case 11: Generator(); break;
-            case 12: StackSimulator(); break;
-            case 13: QueueSimulator(); break;
-            case 15: Sorts(); break;
-            case 17: CsvParser(); break;
-            case 19: RandomNumberGame(); break;
-            case 20: tic_tac(); break;
-            case 24: TableTrainer(); break;
-            case 27: DateFinder(); break;
-            case 28: WeekOfEducation(); break;
+            case 12: clipHelper(); break;
+            case 13: StackSimulator(); break;
+            case 14: QueueSimulator(); break;
+            case 16: Sorts(); break;
+            case 18: CsvParser(); break;
+            case 20: RandomNumberGame(); break;
+            case 21: tic_tac(); break;
+            case 25: TableTrainer(); break;
+            case 28: DateFinder(); break;
+            case 29: WeekOfEducation(); break;
+
         }
         DrawMenu();
     }
