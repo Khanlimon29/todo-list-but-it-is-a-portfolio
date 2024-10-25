@@ -14,7 +14,7 @@ void menuDraw() {
 
 void printAllSubDir(std::vector<fs::path> list) {
 	for (size_t i = 0; i < list.size(); ++i) {
-		std::cout << i + 1 << " " << list[i] << "\n";
+		std::cout << i + 1 << " " << list[i].filename().string() << "\n";
 	}
 }
 
@@ -39,9 +39,8 @@ fs::path getDir(){
 std::vector<fs::path> getDirectoryList(fs::path directory) {
 	std::vector<fs::path> list;
 	for (const auto& entry : fs::directory_iterator(directory)) {
-		const auto filenameStr = entry.path().filename().string();
 		if (entry.is_directory()) {
-			list.push_back(filenameStr);
+			list.push_back(entry.path());
 		}
 	}
 	return list;
@@ -52,39 +51,33 @@ std::unordered_map<int, int> randomIndexMap(int size, int maxRange) {
 	std::unordered_map<int, int> map;
 	RandomNumberGenerator rng;
 	for (int i = 0; i < size; ++i) {
-		while (!(map.emplace(make_pair(rng.getRandomInRange(0, maxRange - 1), i))).second);
+		while (!(map.emplace(rng.getRandomInRange(0, maxRange - 1), i)).second);
 	}
 	return map;
 }
 
-void replaceDir(std::unordered_map<int, int> randomNumberMap, std::vector<fs::path> startFilePathList, std::vector<fs::path> finalFilePathList) {
-	for (auto indexToMove : randomNumberMap) {
-		rename(startFilePathList[indexToMove.first], finalFilePathList[indexToMove.first]);
+void replaceDir(const std::vector<fs::path>& startFilePathList, std::vector<fs::path>& finalFilePathList) {
+	for (size_t i = 0; i < startFilePathList.size(); ++i) {
+		rename(startFilePathList[i], finalFilePathList[i]);
 	}
 }
 
-std::vector<fs::path> getListOfStartPaths(fs::path startDir) {
+std::vector<fs::path> getListOfStartPaths(fs::path startDir, std::unordered_map<int, int>& randomNumberMap) {
 	std::vector<fs::path> list;
+	int index = 0;
 	for (const auto& entry : fs::directory_iterator(startDir)) {
-		fs::path fileDirFullStart;
-		const auto filenameStr = entry.path().filename();
-		if (entry.is_regular_file()) {
-			fileDirFullStart = startDir / filenameStr;
-			list.push_back(fileDirFullStart);
+		if (entry.is_regular_file() && randomNumberMap.count(index) > 0) {
+			list.push_back(entry.path());
 		}
+		++index;
 	}
 	return list;
 }
 
-std::vector<fs::path> getListOfFinalPaths(fs::path startDir, fs::path finalDir) {
+std::vector<fs::path> getListOfFinalPaths(fs::path finalDir, std::vector<fs::path>& startPaths) {
 	std::vector<fs::path> list;
-	for (const auto& entry : fs::directory_iterator(startDir)) {
-		fs::path fileDirFullFinal;
-		const auto filenameStr = entry.path().filename();
-		if (entry.is_regular_file()) {
-			fileDirFullFinal = finalDir / filenameStr;
-			list.push_back(fileDirFullFinal);
-		}
+	for (const auto& startPath : startPaths) {
+		list.push_back(finalDir / startPath.filename());
 	}
 	return list;
 }
@@ -142,22 +135,28 @@ void clipHelper()
 
 	startDir /= dirList[startFolderInd - 1]; // filesystem перегружает "/=" :skull:
 
-	fileListStart = getListOfStartPaths(startDir); // получение списка всех путей для всех файлов в директории 
-	fileListFinal = getListOfFinalPaths(startDir, finalDir); // TODO: переписать логику для работы только со случайными файлами
+	std::vector<fs::path> allFilesInDir;
+	for (const auto& entry : fs::directory_iterator(startDir)) {
+		if (entry.is_regular_file()) {
+			allFilesInDir.push_back(entry.path());
+		}
+	}
 
-	int numbOfFilesInFolder = fileListStart.size();
-
+	int numbOfFilesInFolder = allFilesInDir.size();
 	menuDraw();
-	std::cout << "Выбранная папка: " << dirList[startFolderInd - 1] << "\nКоличество файлов: " << numbOfFilesInFolder << "\nВведите необходимое количество файлов для перемещения : ";
+	std::cout << "Выбранная папка: " << dirList[startFolderInd - 1].filename().string() << "\nКоличество файлов: " << numbOfFilesInFolder << "\nВведите необходимое количество файлов для перемещения: ";
 	std::cin >> numbOfFilesToMove;
 	while ((numbOfFilesToMove < 0) || (numbOfFilesInFolder < numbOfFilesToMove)) {
-		std::cout << "Некорректное ввод, введите другое число: ";
+		std::cout << "Некорректный ввод, введите другое число: ";
 		std::cin >> numbOfFilesToMove;
 	}
 
 	std::unordered_map<int, int> randomNumberMap = randomIndexMap(numbOfFilesToMove, numbOfFilesInFolder);
 
-	replaceDir(randomNumberMap, fileListStart, fileListFinal);
+	fileListStart = getListOfStartPaths(startDir, randomNumberMap);
+	fileListFinal = getListOfFinalPaths(finalDir, fileListStart);
+
+	replaceDir(fileListStart, fileListFinal);
 
 	std::cout << "Файлы перемещены\n";
 
